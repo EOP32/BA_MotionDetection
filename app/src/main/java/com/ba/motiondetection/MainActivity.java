@@ -2,10 +2,14 @@ package com.ba.motiondetection;
 
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -48,10 +52,10 @@ public class MainActivity extends AppCompatActivity implements MotionDetectionLi
         dropView = findViewById(R.id.dropView);
         scoopView = findViewById(R.id.scoopView);
 
-        sendText = findViewById(R.id.textSend);
-        receiveText = findViewById(R.id.textReceive);
-        dropText = findViewById(R.id.textDrop);
-        scoopText = findViewById(R.id.textScoop);
+        sendText = findViewById(R.id.sendNumber);
+        receiveText = findViewById(R.id.receiveNumber);
+        dropText = findViewById(R.id.dropNumber);
+        scoopText = findViewById(R.id.scoopNumber);
 
         registerReceiver(motionBroadcastReceiver, new IntentFilter(Constants.INTENT_IDENTIFIER));
     }
@@ -69,35 +73,38 @@ public class MainActivity extends AppCompatActivity implements MotionDetectionLi
         unregisterReceiver(motionBroadcastReceiver);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void motionDetected(MotionType type) {
         reset();
 
         switch (type) {
             case SEND:
-                sendDetected++;
-                sendText.setText(sendDetected);
                 sendView.setCardBackgroundColor(Color.GREEN);
+                sendDetected++;
+                sendText.setText(String.valueOf(sendDetected));
                 break;
             case RECEIVE:
+                receiveView.setCardBackgroundColor(Color.GREEN);
                 receiveDetected++;
                 receiveText.setText(receiveDetected);
-                receiveView.setCardBackgroundColor(Color.GREEN);
                 break;
             case DROP:
+                dropView.setCardBackgroundColor(Color.GREEN);
                 dropDetected++;
                 dropText.setText(dropDetected);
-                dropView.setCardBackgroundColor(Color.GREEN);
                 break;
             case SCOOP:
+                scoopView.setCardBackgroundColor(Color.GREEN);
                 scoopDetected++;
                 scoopText.setText(scoopDetected);
-                scoopView.setCardBackgroundColor(Color.GREEN);
                 break;
             default:
                 break;
         }
 
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        vibrator.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
         Log.d(Constants.TAG, "motionDetected: " + type);
     }
 

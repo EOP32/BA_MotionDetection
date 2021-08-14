@@ -1,8 +1,8 @@
 package com.ba.motiondetectionlib.model;
 
-//////////////////////////////////////////////////////////////////////////////
-//          a class that contains all global constants                      //
-//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//              a class that contains all global constants                                        //
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public class Constants {
     // ------> general constants for motion detection
@@ -20,14 +20,14 @@ public class Constants {
     public static final float MIN_GENERAL_ACCELERATION_VALUE = 12f;
 
     // ------> SEND motion constants
-    public static final float MIN_SEND_ACCELERATION_VALUE = 10f;
+    public static final float MIN_SEND_ACCELERATION_VALUE = 7f;
 
     // ------> RECEIVE constants
     public static final float MIN_ROTATION_VALUE = -5f;
     public static final long MAX_TIME_DIFF_RECEIVE = 200;
 
     // ------> DROP constants
-    public static final float MIN_DROP_ACCELERATION_VALUE = 1f;
+    public static final float MIN_DROP_ACCELERATION_VALUE = -14f;
 
     // ------> SCOOP constants: we use general constants from above
 

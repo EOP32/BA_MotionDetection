@@ -29,6 +29,8 @@ import com.ba.motiondetectionlib.model.MotionType;
 
 import java.util.List;
 
+import static com.ba.motiondetectionlib.model.Constants.*;
+
 public class MotionDetectionService extends Service implements DetectionSuccessCallback, SensorEventListener {
 
     private final String CHANNEL_ID = "Motion_Detection_Service";
@@ -57,7 +59,7 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(1, createNotification());
-        Log.d(Constants.TAG, "Service started.");
+        Log.d(TAG, "Service started.");
         return START_STICKY;
     }
 
@@ -66,7 +68,7 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
         unregisterSensors();
         stopSelf();
         stopForeground(true);
-        Log.d(Constants.TAG, "Service stopped.");
+        Log.d(TAG, "Service stopped.");
     }
 
     private void initializeAndRegisterSensors() {
@@ -78,13 +80,13 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
         gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
         if (linearAccelerationSensor != null && gravitySensor != null && gyroscopeSensor != null && accelerationSensor != null) {
-            sensorManager.registerListener(this, linearAccelerationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            sensorManager.registerListener(this, accelerationSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            sensorManager.registerListener(this, gravitySensor, SensorManager.SENSOR_DELAY_NORMAL);
-            sensorManager.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            Log.d(Constants.TAG, "All sensors successfully registered.");
+            sensorManager.registerListener(this, linearAccelerationSensor, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, accelerationSensor, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, gravitySensor, SensorManager.SENSOR_DELAY_UI);
+            sensorManager.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_UI);
+            Log.d(TAG, "All sensors successfully registered.");
         } else {
-            Log.d(Constants.TAG, "One or multiple sensors are not available on this device. No sensors delivered to sensor manager.");
+            Log.d(TAG, "One or multiple sensors are not available on this device. No sensors delivered to sensor manager.");
         }
     }
 
@@ -93,7 +95,7 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
         sensorManager.unregisterListener(this, accelerationSensor);
         sensorManager.unregisterListener(this, gravitySensor);
         sensorManager.unregisterListener(this, gyroscopeSensor);
-        Log.d(Constants.TAG, "Shut down sensors.");
+        Log.d(TAG, "Shut down sensors.");
     }
 
     private void initializeDetectors() {
@@ -104,26 +106,26 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
     }
 
     private void sendBroadcast(String motion) {
-        Intent intent = new Intent(Constants.INTENT_IDENTIFIER);
-        intent.putExtra(Constants.STRING_EXTRA_IDENTIFIER, motion);
+        Intent intent = new Intent(INTENT_IDENTIFIER);
+        intent.putExtra(STRING_EXTRA_IDENTIFIER, motion);
         sendBroadcast(intent);
-        Log.d(Constants.TAG, "Sending motion detection broadcast finished.");
+        Log.d(TAG, "Motion detection broadcast sent. " + motion);
     }
 
     @Override
     public void onMotionDetected(MotionType type) {
         switch (type) {
             case SEND:
-                sendBroadcast(Constants.SEND_MOTION);
+                sendBroadcast(SEND_MOTION);
                 break;
             case RECEIVE:
-                sendBroadcast(Constants.RECEIVE_MOTION);
+                sendBroadcast(RECEIVE_MOTION);
                 break;
             case DROP:
-                sendBroadcast(Constants.DROP_MOTION);
+                sendBroadcast(DROP_MOTION);
                 break;
             case SCOOP:
-                sendBroadcast(Constants.SCOOP_MOTION);
+                sendBroadcast(SCOOP_MOTION);
                 break;
             default:
                 break;
