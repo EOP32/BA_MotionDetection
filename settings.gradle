@@ -1,0 +1,3 @@
+include ':MotionDetectionLib'
+include ':app'
+rootProject.name = "MotionDetection"
