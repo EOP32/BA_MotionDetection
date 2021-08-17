@@ -29,7 +29,7 @@ public class ScoopMotionDetector implements Detector {
         long liftTimeDiff = timeNow - liftMotion.timestamp;
 
         if (cameraDownPosition.detected && cameraUpPosition.detected && liftMotion.detected) {
-            if (cameraUpTimeDiff < MAX_GENERAL_TIME_DIFF && liftTimeDiff < MAX_GENERAL_TIME_DIFF && cameraDownTimeDiff < cameraUpTimeDiff) {
+            if (cameraUpTimeDiff < MAX_GENERAL_TIME_DIFF && liftTimeDiff < MAX_GENERAL_TIME_DIFF && cameraDownTimeDiff < cameraUpTimeDiff && liftTimeDiff < cameraUpTimeDiff) {
                 callback.onMotionDetected(MotionType.SCOOP);
                 cameraUpPosition.detected = false;
                 cameraDownPosition.detected = false;

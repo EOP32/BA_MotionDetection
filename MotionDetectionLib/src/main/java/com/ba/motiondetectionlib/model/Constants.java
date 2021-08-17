@@ -23,11 +23,11 @@ public class Constants {
     public static final float MIN_SEND_ACCELERATION_VALUE = 7f;
 
     // ------> RECEIVE constants
-    public static final float MIN_ROTATION_VALUE = -5f;
-    public static final long MAX_TIME_DIFF_RECEIVE = 200;
+    public static final float MIN_ROTATION_VALUE = 7f;
+    public static final long MAX_TIME_DIFF_RECEIVE = 150;
 
     // ------> DROP constants
-    public static final float MIN_DROP_ACCELERATION_VALUE = -14f;
+    public static final float MIN_DROP_ACCELERATION_VALUE = -15f;
 
     // ------> SCOOP constants: we use general constants from above
 

@@ -3,7 +3,9 @@ package com.ba.motiondetectionlib.detectors;
 import com.ba.motiondetectionlib.model.MotionDetectionState;
 import com.ba.motiondetectionlib.model.MotionType;
 
-import static com.ba.motiondetectionlib.model.Constants.*;
+import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
+import static com.ba.motiondetectionlib.model.Constants.MIN_DROP_ACCELERATION_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
 
 public class DropMotionDetector implements Detector {
 
@@ -27,8 +29,8 @@ public class DropMotionDetector implements Detector {
         long liftTimeDiff = timeNow - dropMotion.timestamp;
 
         if (cameraDownPosition.detected && cameraUpPosition.detected && dropMotion.detected) {
-            if (cameraDownTimeDiff < MAX_GENERAL_TIME_DIFF && liftTimeDiff < MAX_GENERAL_TIME_DIFF && cameraUpTimeDiff < cameraDownTimeDiff) {
-                callback.onMotionDetected(MotionType.SCOOP);
+            if (cameraDownTimeDiff < MAX_GENERAL_TIME_DIFF && liftTimeDiff < MAX_GENERAL_TIME_DIFF && cameraUpTimeDiff < cameraDownTimeDiff && liftTimeDiff < cameraDownTimeDiff) {
+                callback.onMotionDetected(MotionType.DROP);
                 cameraUpPosition.detected = false;
                 cameraDownPosition.detected = false;
                 dropMotion.detected = false;
@@ -37,7 +39,7 @@ public class DropMotionDetector implements Detector {
     }
 
     public void processAccelerationData(float zValue) {
-        if (zValue > MIN_DROP_ACCELERATION_VALUE) {
+        if (zValue < MIN_DROP_ACCELERATION_VALUE) {
             dropMotion.detected = true;
             dropMotion.timestamp = timestamp();
             detect();
