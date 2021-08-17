@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.ba.motiondetectionlib.broadcast.MotionBroadcastReceiver;
 import com.ba.motiondetectionlib.broadcast.MotionDetectionListener;
@@ -56,21 +58,23 @@ public class MainActivity extends AppCompatActivity implements MotionDetectionLi
         receiveText = findViewById(R.id.receiveNumber);
         dropText = findViewById(R.id.dropNumber);
         scoopText = findViewById(R.id.scoopNumber);
-
-        registerReceiver(motionBroadcastReceiver, new IntentFilter(Constants.INTENT_IDENTIFIER));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         serviceController.startDetectionService();
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constants.INTENT_IDENTIFIER);
+        LocalBroadcastManager.getInstance(this).registerReceiver(motionBroadcastReceiver, filter);
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(motionBroadcastReceiver);
         serviceController.stopDetectionService();
-        unregisterReceiver(motionBroadcastReceiver);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -87,17 +91,17 @@ public class MainActivity extends AppCompatActivity implements MotionDetectionLi
             case RECEIVE:
                 receiveView.setCardBackgroundColor(Color.GREEN);
                 receiveDetected++;
-                receiveText.setText(receiveDetected);
+                receiveText.setText(String.valueOf(receiveDetected));
                 break;
             case DROP:
                 dropView.setCardBackgroundColor(Color.GREEN);
                 dropDetected++;
-                dropText.setText(dropDetected);
+                dropText.setText(String.valueOf(dropDetected));
                 break;
             case SCOOP:
                 scoopView.setCardBackgroundColor(Color.GREEN);
                 scoopDetected++;
-                scoopText.setText(scoopDetected);
+                scoopText.setText(String.valueOf(scoopDetected));
                 break;
             default:
                 break;

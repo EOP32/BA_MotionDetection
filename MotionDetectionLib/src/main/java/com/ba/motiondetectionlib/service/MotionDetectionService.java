@@ -17,6 +17,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.ba.motiondetectionlib.R;
 import com.ba.motiondetectionlib.detectors.DetectionSuccessCallback;
@@ -106,9 +107,10 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
     }
 
     private void sendBroadcast(String motion) {
-        Intent intent = new Intent(INTENT_IDENTIFIER);
+        Intent intent = new Intent();
+        intent.setAction(INTENT_IDENTIFIER);
         intent.putExtra(STRING_EXTRA_IDENTIFIER, motion);
-        sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         Log.d(TAG, "Motion detection broadcast sent. " + motion);
     }
 
