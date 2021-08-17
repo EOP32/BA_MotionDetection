@@ -20,6 +20,7 @@ public class Constants {
     public static final float MIN_GENERAL_ACCELERATION_VALUE = 12f;
 
     // ------> SEND motion constants
+    public static final float MIN_SEND_ROTATION_VALUE = 5f;
     public static final float MIN_SEND_ACCELERATION_VALUE = 7f;
 
     // ------> RECEIVE constants

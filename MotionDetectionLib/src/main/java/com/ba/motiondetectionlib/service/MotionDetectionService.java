@@ -153,6 +153,7 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
                 break;
             case Sensor.TYPE_GYROSCOPE:
                 receiveDetector.processGyroData(event.values[1]);
+                sendDetector.processGyroData(event.values[1]);
                 break;
             default:
                 break;

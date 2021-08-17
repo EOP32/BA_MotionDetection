@@ -1,5 +1,7 @@
 package com.ba.motiondetectionlib.detectors;
 
+import android.util.Log;
+
 import com.ba.motiondetectionlib.model.MotionDetectionState;
 import com.ba.motiondetectionlib.model.MotionType;
 
@@ -7,7 +9,10 @@ import static com.ba.motiondetectionlib.model.Constants.*;
 
 public class SendMotionDetector implements Detector {
 
-    private MotionDetectionState sidewaysGesture;
+    private MotionDetectionState motionRight;
+    private MotionDetectionState motionLeft;
+    private MotionDetectionState rotationClockWise;
+    private MotionDetectionState rotationCounterClockWise;
     private MotionDetectionState backPosition;
     private MotionDetectionState forthPosition;
     private DetectionSuccessCallback callback;
@@ -15,7 +20,10 @@ public class SendMotionDetector implements Detector {
     public SendMotionDetector(DetectionSuccessCallback callback) {
         backPosition = new MotionDetectionState(false, 0);
         forthPosition = new MotionDetectionState(false, 0);
-        sidewaysGesture = new MotionDetectionState(false, 0);
+        motionRight = new MotionDetectionState(false, 0);
+        motionLeft = new MotionDetectionState(false, 0);
+        rotationClockWise = new MotionDetectionState(false, 0);
+        rotationCounterClockWise = new MotionDetectionState(false, 0);
         this.callback = callback;
     }
 
@@ -24,25 +32,36 @@ public class SendMotionDetector implements Detector {
         long timeNow = timestamp();
         long backPositionTimeDiff = timeNow - backPosition.timestamp;
         long forthPositionTimeDiff = timeNow - forthPosition.timestamp;
-        long liftTimeDiff = timeNow - sidewaysGesture.timestamp;
+        long throwTimeDiffRight = timeNow - motionRight.timestamp;
+        long throwTimeDiffLeft = timeNow - motionLeft.timestamp;
         long maxTimeDiff = MAX_GENERAL_TIME_DIFF;
 
-        if (backPosition.detected && forthPosition.detected && sidewaysGesture.detected) {
-            if (backPositionTimeDiff < maxTimeDiff && liftTimeDiff < maxTimeDiff && forthPositionTimeDiff < backPositionTimeDiff) {
+        if (backPosition.detected && forthPosition.detected && motionRight.detected && rotationCounterClockWise.detected) {
+            if (backPositionTimeDiff < maxTimeDiff && throwTimeDiffRight < maxTimeDiff && forthPositionTimeDiff < backPositionTimeDiff) {
                 callback.onMotionDetected(MotionType.SEND);
-                backPosition.detected = false;
-                forthPosition.detected = false;
-                sidewaysGesture.detected = false;
+                resetDetection();
+            }
+        }
+
+        if (backPosition.detected && forthPosition.detected && motionLeft.detected && rotationClockWise.detected) {
+            if (forthPositionTimeDiff < maxTimeDiff && throwTimeDiffLeft < maxTimeDiff && backPositionTimeDiff < forthPositionTimeDiff) {
+                callback.onMotionDetected(MotionType.SEND);
+                resetDetection();
             }
         }
     }
 
     public void processAccelerationData(float xValue) {
-        float x = Math.abs(xValue);
-
-        if (x > MIN_SEND_ACCELERATION_VALUE) {
-            sidewaysGesture.detected = true;
-            sidewaysGesture.timestamp = timestamp();
+        if (xValue > MIN_SEND_ACCELERATION_VALUE) {
+            motionRight.detected = true;
+            motionRight.timestamp = timestamp();
+            Log.d(TAG, "motion right");
+            detect();
+        }
+        if (xValue < -MIN_SEND_ACCELERATION_VALUE) {
+            motionLeft.detected = true;
+            motionLeft.timestamp = timestamp();
+            Log.d(TAG, "motion left");
             detect();
         }
     }
@@ -60,7 +79,32 @@ public class SendMotionDetector implements Detector {
         }
     }
 
+    public void processGyroData(float yValue) {
+        if (yValue > MIN_SEND_ROTATION_VALUE) {
+            rotationClockWise.detected = true;
+            rotationClockWise.timestamp = timestamp();
+            Log.d(TAG, "rotation clockwise");
+            detect();
+        }
+
+        if (yValue < -MIN_SEND_ROTATION_VALUE) {
+            rotationCounterClockWise.detected = true;
+            rotationCounterClockWise.timestamp = timestamp();
+            Log.d(TAG, "rotation counter clockwise");
+            detect();
+        }
+    }
+
     private long timestamp() {
         return System.currentTimeMillis();
+    }
+
+    private void resetDetection() {
+        backPosition.detected = false;
+        forthPosition.detected = false;
+        motionRight.detected = false;
+        motionLeft.detected = false;
+        rotationClockWise.detected = false;
+        rotationCounterClockWise.detected = false;
     }
 }
