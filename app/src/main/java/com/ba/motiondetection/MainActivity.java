@@ -109,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements MotionDetectionLi
 
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
-        Log.d(Constants.TAG, "motionDetected: " + type);
     }
 
     private void reset() {

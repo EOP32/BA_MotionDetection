@@ -14,6 +14,10 @@ public class DropMotionDetectorTest {
     private DropMotionDetector detector;
     private DetectionSuccessCallback callback;
 
+    private final float VALID_GRAVITY_POSITIVE = 8f;
+    private final float VALID_GRAVITY_NEGATIVE = -8f;
+    private final float VALID_ACCEL = -20f;
+
     @Before
     public void setup() {
         callback = mock(DetectionSuccessCallback.class);
@@ -22,19 +26,13 @@ public class DropMotionDetectorTest {
 
     @Test
     public void validSensorDataAndValidTimeDifferenceSuccess() throws InterruptedException {
-        detector.processGravityData(10);
-        detector.processGravityData(0);
-        detector.processGravityData(3);
+        detector.processGravityData(VALID_GRAVITY_POSITIVE);
         Thread.sleep(50);
 
-        detector.processAccelerationData(0);
-        detector.processAccelerationData(10);
-        detector.processAccelerationData(-20);
+        detector.processGravityData(VALID_GRAVITY_NEGATIVE);
         Thread.sleep(50);
 
-        detector.processGravityData(-10);
-        detector.processGravityData(-2);
-        detector.processGravityData(-1);
+        detector.processAccelerationData(VALID_ACCEL);
 
         verify(callback, times(1)).onMotionDetected(MotionType.DROP);
         verifyNoMoreInteractions(callback);
@@ -44,17 +42,17 @@ public class DropMotionDetectorTest {
     public void validButBorderlineSensorValuesSuccess() throws InterruptedException {
         detector.processGravityData(7.1f);
         detector.processGravityData(1f);
+        Thread.sleep(50);
+
+        detector.processGravityData(6.1f);
+        detector.processGravityData(2.1f);
         detector.processGravityData(-7.1f);
         Thread.sleep(50);
 
         detector.processAccelerationData(-1.1f);
         detector.processAccelerationData(13.1f);
-        detector.processAccelerationData(-15.1f);
+        detector.processAccelerationData(-12.1f);
         Thread.sleep(50);
-
-        detector.processGravityData(-7.1f);
-        detector.processGravityData(7.1f);
-        detector.processGravityData(17.1f);
 
         verify(callback, times(1)).onMotionDetected(MotionType.DROP);
         verifyNoMoreInteractions(callback);
@@ -62,16 +60,13 @@ public class DropMotionDetectorTest {
 
     @Test
     public void validButBorderlineTimeDifferenceSuccess() throws InterruptedException {
-        detector.processGravityData(7.1f);
-        detector.processGravityData(1f);
-        Thread.sleep(50);
+        detector.processGravityData(VALID_GRAVITY_POSITIVE);
+        Thread.sleep(200);
 
-        detector.processAccelerationData(13.1f);
-        detector.processAccelerationData(-15.1f);
-        Thread.sleep(400);
+        detector.processGravityData(VALID_GRAVITY_NEGATIVE);
+        Thread.sleep(200);
 
-        detector.processGravityData(-7.1f);
-        detector.processGravityData(7.1f);
+        detector.processAccelerationData(VALID_ACCEL);
 
         verify(callback, times(1)).onMotionDetected(MotionType.DROP);
         verifyNoMoreInteractions(callback);
@@ -79,86 +74,83 @@ public class DropMotionDetectorTest {
 
     @Test
     public void borderlineButInvalidTimeValuesFail() throws InterruptedException {
-        detector.processAccelerationData(13.1f);
-        detector.processAccelerationData(-15.1f);
-        Thread.sleep(450);
-
-        detector.processGravityData(7.1f);
-        detector.processGravityData(1f);
+        detector.processGravityData(VALID_GRAVITY_POSITIVE);
         Thread.sleep(50);
 
-        detector.processGravityData(-7.1f);
-        detector.processGravityData(7.1f);
+        detector.processGravityData(VALID_GRAVITY_NEGATIVE);
+        Thread.sleep(450);
+
+        detector.processAccelerationData(VALID_ACCEL);
 
         verifyZeroInteractions(callback);
     }
 
     @Test
     public void borderlineButInvalidAccelerationSensorValuesFail() throws InterruptedException {
-        detector.processAccelerationData(-15f);
+        detector.processGravityData(VALID_GRAVITY_POSITIVE);
         Thread.sleep(50);
 
-        detector.processGravityData(7.1f);
+        detector.processGravityData(VALID_GRAVITY_NEGATIVE);
         Thread.sleep(50);
 
-        detector.processGravityData(-7.1f);
+        detector.processAccelerationData(-10f);
         verifyZeroInteractions(callback);
     }
 
     @Test
     public void borderlineButInvalidGravitySensorValuesFail() throws InterruptedException {
-        detector.processAccelerationData(-16f);
-        Thread.sleep(50);
-
-        detector.processGravityData(7.1f);
+        detector.processGravityData(VALID_GRAVITY_POSITIVE);
         Thread.sleep(50);
 
         detector.processGravityData(-5f);
+        Thread.sleep(50);
+
+        detector.processAccelerationData(VALID_ACCEL);
         verifyZeroInteractions(callback);
     }
 
     @Test
     public void correctValuesButWrongOrderFail() throws InterruptedException {
-        detector.processAccelerationData(-15f);
+        detector.processAccelerationData(VALID_ACCEL);
         Thread.sleep(50);
 
-        detector.processGravityData(-10f);
+        detector.processGravityData(VALID_GRAVITY_NEGATIVE);
         Thread.sleep(50);
 
-        detector.processGravityData(17f);
+        detector.processGravityData(VALID_GRAVITY_POSITIVE);
         verifyZeroInteractions(callback);
     }
 
     @Test
     public void correctValuesButWrongOrderFail2() throws InterruptedException {
-        detector.processGravityData(-10f);
+        detector.processGravityData(VALID_GRAVITY_NEGATIVE);
         Thread.sleep(50);
 
-        detector.processAccelerationData(-15f);
+        detector.processAccelerationData(VALID_ACCEL);
         Thread.sleep(50);
 
-        detector.processGravityData(17f);
+        detector.processGravityData(VALID_GRAVITY_POSITIVE);
         verifyZeroInteractions(callback);
     }
 
     @Test
     public void correctValuesButWrongOrderFail3() throws InterruptedException {
-        detector.processGravityData(10f);
+        detector.processGravityData(VALID_GRAVITY_POSITIVE);
         Thread.sleep(50);
 
-        detector.processAccelerationData(-15f);
+        detector.processAccelerationData(VALID_ACCEL);
         Thread.sleep(50);
 
-        detector.processGravityData(-17f);
+        detector.processGravityData(-VALID_GRAVITY_NEGATIVE);
         verifyZeroInteractions(callback);
     }
 
     @Test
     public void correctValuesButOneMissingFail() throws InterruptedException {
-        detector.processAccelerationData(-15f);
+        detector.processAccelerationData(VALID_ACCEL);
         Thread.sleep(50);
 
-        detector.processGravityData(-10f);
+        detector.processGravityData(VALID_GRAVITY_NEGATIVE);
         Thread.sleep(50);
     }
 }

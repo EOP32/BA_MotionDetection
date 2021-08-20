@@ -10,9 +10,9 @@ import static com.ba.motiondetectionlib.model.Constants.MIN_ROTATION_VALUE;
 
 public class ReceiveMotionDetector implements Detector {
 
-    private DetectionSuccessCallback callback;
-    private MotionDetectionState rotationGesture;
-    private MotionDetectionState upMotionGesture;
+    private final DetectionSuccessCallback callback;
+    private final MotionDetectionState rotationGesture;
+    private final MotionDetectionState upMotionGesture;
     private boolean portraitMode;
     private float before;
 
@@ -26,15 +26,17 @@ public class ReceiveMotionDetector implements Detector {
     public void detect() {
         long timeNow = timestamp();
         long diffR = timeNow - rotationGesture.timestamp;
-        long diffY = timeNow - upMotionGesture.timestamp;
+        long diffU = timeNow - upMotionGesture.timestamp;
         long maxTimeDiff = MAX_TIME_DIFF_RECEIVE;
 
-        if (rotationGesture.detected && upMotionGesture.detected && portraitMode) {
-            if (diffR < maxTimeDiff && diffY < maxTimeDiff) {
-                callback.onMotionDetected(MotionType.RECEIVE);
-                rotationGesture.detected = false;
-                upMotionGesture.detected = false;
-            }
+        if (rotationGesture.detected &&
+                upMotionGesture.detected &&
+                portraitMode &&
+                diffR < maxTimeDiff &&
+                diffU < maxTimeDiff) {
+
+            callback.onMotionDetected(MotionType.RECEIVE);
+            reset();
         }
     }
 
@@ -59,6 +61,11 @@ public class ReceiveMotionDetector implements Detector {
 
     public void processGravityData(float yValue) {
         portraitMode = yValue > MIN_GENERAL_GRAVITY_VALUE;
+    }
+
+    private void reset() {
+        rotationGesture.detected = false;
+        upMotionGesture.detected = false;
     }
 
     private long timestamp() {

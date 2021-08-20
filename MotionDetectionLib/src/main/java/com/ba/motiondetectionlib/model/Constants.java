@@ -18,6 +18,7 @@ public class Constants {
     public static final float MIN_GENERAL_GRAVITY_VALUE = 7f;
     public static final long MAX_GENERAL_TIME_DIFF = 500;
     public static final float MIN_GENERAL_ACCELERATION_VALUE = 12f;
+    public static final float MAX_GRAVITY = 9.81f;
 
     // ------> SEND motion constants
     public static final float MIN_SEND_ROTATION_VALUE = 5f;
@@ -28,9 +29,10 @@ public class Constants {
     public static final long MAX_TIME_DIFF_RECEIVE = 150;
 
     // ------> DROP constants
-    public static final float MIN_DROP_ACCELERATION_VALUE = -15f;
+    public static final float MIN_DROP_ACCELERATION_VALUE = -16f;
 
     // ------> SCOOP constants: we use general constants from above
+    public static final float MIN_SCOOP_ACCELERATION_VALUE = 16f;
 
     // ------> tag for logging
     public static final String TAG = "MotionTag";

@@ -25,12 +25,15 @@ import com.ba.motiondetectionlib.detectors.DropMotionDetector;
 import com.ba.motiondetectionlib.detectors.ReceiveMotionDetector;
 import com.ba.motiondetectionlib.detectors.ScoopMotionDetector;
 import com.ba.motiondetectionlib.detectors.SendMotionDetector;
-import com.ba.motiondetectionlib.model.Constants;
 import com.ba.motiondetectionlib.model.MotionType;
 
-import java.util.List;
-
-import static com.ba.motiondetectionlib.model.Constants.*;
+import static com.ba.motiondetectionlib.model.Constants.DROP_MOTION;
+import static com.ba.motiondetectionlib.model.Constants.INTENT_IDENTIFIER;
+import static com.ba.motiondetectionlib.model.Constants.RECEIVE_MOTION;
+import static com.ba.motiondetectionlib.model.Constants.SCOOP_MOTION;
+import static com.ba.motiondetectionlib.model.Constants.SEND_MOTION;
+import static com.ba.motiondetectionlib.model.Constants.STRING_EXTRA_IDENTIFIER;
+import static com.ba.motiondetectionlib.model.Constants.TAG;
 
 public class MotionDetectionService extends Service implements DetectionSuccessCallback, SensorEventListener {
 
@@ -177,7 +180,7 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intentActivity, 0);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Motion Detection")
+                .setContentTitle("Service running")
                 .setContentText("Started detecting motions.")
                 .setSmallIcon(R.drawable.ic_loop)
                 .setContentIntent(contentIntent)
