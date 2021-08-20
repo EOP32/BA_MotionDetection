@@ -45,7 +45,7 @@ public class DropMotionDetector implements Detector {
                 liftMotion.detected &&
                 cameraDownTimeDiff < MAX_GENERAL_TIME_DIFF &&
                 dropTimeDiff < MAX_GENERAL_TIME_DIFF &&
-                cameraUpTimeDiff < cameraDownTimeDiff &&
+                liftTimeDiff < cameraDownTimeDiff &&
                 cameraUpTimeDiff < liftTimeDiff &&
                 dropTimeDiff < cameraUpTimeDiff) {
 
