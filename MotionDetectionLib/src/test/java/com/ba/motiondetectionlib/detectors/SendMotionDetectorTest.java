@@ -10,6 +10,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMotionDetectorTest {
@@ -57,5 +59,203 @@ public class SendMotionDetectorTest {
         detector.processGravityData(GRAVITY_BACK_VALID);
 
         verify(callback, times(1)).onMotionDetected(MotionType.SEND);
+    }
+
+    @Test
+    public void validBorderlineValuesRightHandSuccess() throws InterruptedException {
+        detector.processAccelerationData(7.1f);
+        Thread.sleep(10);
+        detector.processGyroData(-5.1f);
+        Thread.sleep(10);
+        detector.processGravityData(-7.1f);
+        Thread.sleep(10);
+        detector.processGravityData(7.1f);
+
+        verify(callback, times(1)).onMotionDetected(MotionType.SEND);
+    }
+
+    @Test
+    public void validBorderlineValuesLeftHandSuccess() throws InterruptedException {
+        detector.processAccelerationData(-7.1f);
+        Thread.sleep(10);
+        detector.processGyroData(5.1f);
+        Thread.sleep(10);
+        detector.processGravityData(7.1f);
+        Thread.sleep(10);
+        detector.processGravityData(-7.1f);
+
+        verify(callback, times(1)).onMotionDetected(MotionType.SEND);
+    }
+
+    @Test
+    public void validRightHandBorderlineTimeSuccess() throws InterruptedException {
+        detector.processAccelerationData(MOTION_RIGHT_VALID);
+        Thread.sleep(200);
+        detector.processGyroData(ROTATE_RIGHT_VALID);
+        Thread.sleep(150);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+        Thread.sleep(100);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+
+        verify(callback, times(1)).onMotionDetected(MotionType.SEND);
+    }
+
+    @Test
+    public void validLeftHandBorderlineTimeSuccess() throws InterruptedException {
+        detector.processAccelerationData(MOTION_LEFT_VALID);
+        Thread.sleep(150);
+        detector.processGyroData(ROTATE_LEFT_VALID);
+        Thread.sleep(150);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+        Thread.sleep(150);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+
+        verify(callback, times(1)).onMotionDetected(MotionType.SEND);
+    }
+
+    @Test
+    public void rightHandInvalidRotationShouldFail() throws InterruptedException {
+        detector.processAccelerationData(MOTION_RIGHT_VALID);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_LEFT_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    public void leftHandInvalidRotationShouldFail() throws InterruptedException {
+        detector.processAccelerationData(MOTION_LEFT_VALID);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_RIGHT_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    public void rightHandInvalidGravityShouldFail() throws InterruptedException {
+        detector.processAccelerationData(MOTION_RIGHT_VALID);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_RIGHT_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    public void leftHandInvalidGravityShouldFail() throws InterruptedException {
+        detector.processAccelerationData(MOTION_LEFT_VALID);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_LEFT_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    public void rightHandInvalidAccelShouldFail() throws InterruptedException {
+        detector.processAccelerationData(6);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_RIGHT_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    public void leftHandInvalidAccelShouldFail() throws InterruptedException {
+        detector.processAccelerationData(-6);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_LEFT_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    public void rightHandValidValuesWrongOrderShouldFail() throws InterruptedException {
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+        Thread.sleep(10);
+        detector.processAccelerationData(MOTION_RIGHT_VALID);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_RIGHT_VALID);
+        Thread.sleep(10);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    public void leftHandValidValuesWrongOrderShouldFail() throws InterruptedException {
+        detector.processGyroData(ROTATE_LEFT_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+        Thread.sleep(10);
+        detector.processAccelerationData(MOTION_LEFT_VALID);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    public void rightHandValidValuesWrongOrderShouldFail2() throws InterruptedException {
+        detector.processAccelerationData(MOTION_RIGHT_VALID);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_RIGHT_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+        Thread.sleep(10);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    public void leftHandValidValuesWrongOrderShouldFail2() throws InterruptedException {
+        detector.processAccelerationData(MOTION_LEFT_VALID);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_LEFT_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    public void rightValuesWrongOrderShouldFail2() throws InterruptedException {
+        detector.processAccelerationData(MOTION_RIGHT_VALID);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_RIGHT_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID);
+        Thread.sleep(10);
+
+        verifyZeroInteractions(callback);
     }
 }
