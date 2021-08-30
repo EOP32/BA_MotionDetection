@@ -5,12 +5,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -38,7 +38,6 @@ import static com.ba.motiondetectionlib.model.Constants.TAG;
 public class MotionDetectionService extends Service implements DetectionSuccessCallback, SensorEventListener {
 
     private final String CHANNEL_ID = "Motion_Detection_Service";
-    private Context context;
 
     private SensorManager sensorManager;
     private Sensor linearAccelerationSensor;
@@ -54,7 +53,6 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
     @Override
     public void onCreate() {
         super.onCreate();
-        this.context = ServiceController.context;
         initializeAndRegisterSensors();
         initializeDetectors();
         createNotificationChannel();
@@ -76,7 +74,7 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
     }
 
     private void initializeAndRegisterSensors() {
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensorManager = (SensorManager) getSystemService(this.SENSOR_SERVICE);
 
         linearAccelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         accelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -109,14 +107,6 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
         scoopDetector = new ScoopMotionDetector(this);
     }
 
-    private void sendBroadcast(String motion) {
-        Intent intent = new Intent();
-        intent.setAction(INTENT_IDENTIFIER);
-        intent.putExtra(STRING_EXTRA_IDENTIFIER, motion);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        Log.d(TAG, "Motion detection broadcast sent. " + motion);
-    }
-
     @Override
     public void onMotionDetected(MotionType type) {
         switch (type) {
@@ -135,6 +125,14 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
             default:
                 break;
         }
+    }
+
+    private void sendBroadcast(String motion) {
+        Intent intent = new Intent();
+        intent.setAction(INTENT_IDENTIFIER);
+        intent.putExtra(STRING_EXTRA_IDENTIFIER, motion);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        Log.d(TAG, "Motion detection broadcast sent. " + motion);
     }
 
     @Override
@@ -175,8 +173,8 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
     }
 
     private Notification createNotification() {
-        String packageName = context.getPackageName();
-        Intent intentActivity = context.getPackageManager().getLaunchIntentForPackage(packageName);
+        String packageName = this.getPackageName();
+        Intent intentActivity = this.getPackageManager().getLaunchIntentForPackage(packageName);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intentActivity, 0);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -196,5 +194,11 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public class LocalBinder extends Binder {
+        public MotionDetectionService getService() {
+            return MotionDetectionService.this;
+        }
     }
 }

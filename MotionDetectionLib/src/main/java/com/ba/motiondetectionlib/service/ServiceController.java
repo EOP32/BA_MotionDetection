@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 public class ServiceController implements IServiceController {
-    public static Context context;
+    private Context context;
 
     public ServiceController(Context context) {
         this.context = context;

@@ -1,5 +1,5 @@
 package com.ba.motiondetectionlib.detectors;
 
-public interface Detector {
+public interface IDetector {
     void detect();
 }

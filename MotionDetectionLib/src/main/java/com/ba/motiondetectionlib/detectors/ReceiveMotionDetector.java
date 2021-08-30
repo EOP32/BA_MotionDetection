@@ -8,7 +8,7 @@ import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_ACCELERATION
 import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_ROTATION_VALUE;
 
-public class ReceiveMotionDetector implements Detector {
+public class ReceiveMotionDetector implements IDetector {
 
     private final DetectionSuccessCallback callback;
     private final MotionDetectionState rotationGesture;

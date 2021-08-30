@@ -8,7 +8,7 @@ import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_ACCELERATION_VALUE;
 
-public class ScoopMotionDetector implements Detector {
+public class ScoopMotionDetector implements IDetector {
 
     private MotionDetectionState liftMotion;
     private MotionDetectionState dropMotion;
@@ -33,18 +33,7 @@ public class ScoopMotionDetector implements Detector {
         long cameraDownTimeDiff = timeNow - cameraDownPosition.timestamp;
         long liftTimeDiff = timeNow - liftMotion.timestamp;
         long dropTimeDiff = timeNow - dropMotion.timestamp;
-
-        System.out.println("Up: " + cameraUpTimeDiff);
-        System.out.println("Down: " + cameraDownTimeDiff);
-        System.out.println("Lift: " + liftTimeDiff);
-        System.out.println("Drop: " + dropTimeDiff);
-
-        boolean t = cameraUpTimeDiff < MAX_GENERAL_TIME_DIFF;
-        boolean t1 = dropTimeDiff < cameraUpTimeDiff;
-        boolean t2 = cameraDownTimeDiff < dropTimeDiff;
-        boolean t3 = liftTimeDiff < dropTimeDiff;
-        System.out.println(t + " " + t1 + " " + t2 + " " + t3);
-
+        
         if (cameraDownPosition.detected &&
                 cameraUpPosition.detected &&
                 liftMotion.detected &&

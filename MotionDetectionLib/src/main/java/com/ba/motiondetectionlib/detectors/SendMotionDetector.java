@@ -8,7 +8,7 @@ import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALU
 import static com.ba.motiondetectionlib.model.Constants.MIN_SEND_ACCELERATION_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_SEND_ROTATION_VALUE;
 
-public class SendMotionDetector implements Detector {
+public class SendMotionDetector implements IDetector {
 
     private final MotionDetectionState motionRight;
     private final MotionDetectionState motionLeft;

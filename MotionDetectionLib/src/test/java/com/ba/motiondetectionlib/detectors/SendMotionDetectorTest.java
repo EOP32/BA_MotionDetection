@@ -10,7 +10,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -92,7 +91,7 @@ public class SendMotionDetectorTest {
         detector.processAccelerationData(MOTION_RIGHT_VALID);
         Thread.sleep(200);
         detector.processGyroData(ROTATE_RIGHT_VALID);
-        Thread.sleep(150);
+        Thread.sleep(100);
         detector.processGravityData(GRAVITY_BACK_VALID);
         Thread.sleep(100);
         detector.processGravityData(GRAVITY_FORTH_VALID);

@@ -1,7 +1,5 @@
 package com.ba.motiondetectionlib.detectors;
 
-import android.util.Log;
-
 import com.ba.motiondetectionlib.model.MotionDetectionState;
 import com.ba.motiondetectionlib.model.MotionType;
 
@@ -9,9 +7,8 @@ import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
 import static com.ba.motiondetectionlib.model.Constants.MAX_GRAVITY;
 import static com.ba.motiondetectionlib.model.Constants.MIN_DROP_ACCELERATION_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
-import static com.ba.motiondetectionlib.model.Constants.TAG;
 
-public class DropMotionDetector implements Detector {
+public class DropMotionDetector implements IDetector {
 
     private final MotionDetectionState dropMotion;
     private final MotionDetectionState liftMotion;
