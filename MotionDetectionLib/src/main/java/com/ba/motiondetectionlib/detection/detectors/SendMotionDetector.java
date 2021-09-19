@@ -1,5 +1,8 @@
-package com.ba.motiondetectionlib.detectors;
+package com.ba.motiondetectionlib.detection.detectors;
 
+import com.ba.motiondetectionlib.detection.MotionSensorSource;
+import com.ba.motiondetectionlib.detection.SensorDataListener;
+import com.ba.motiondetectionlib.detection.detectors.MotionDetector;
 import com.ba.motiondetectionlib.model.MotionDetectionState;
 import com.ba.motiondetectionlib.model.MotionType;
 
@@ -9,6 +12,7 @@ import static com.ba.motiondetectionlib.model.Constants.MIN_SEND_ACCELERATION_VA
 import static com.ba.motiondetectionlib.model.Constants.MIN_SEND_ROTATION_VALUE;
 
 import android.content.Context;
+import android.content.Intent;
 
 public class SendMotionDetector extends MotionDetector implements SensorDataListener {
 
@@ -19,8 +23,8 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
     private final MotionDetectionState backPosition;
     private final MotionDetectionState forthPosition;
 
-    public SendMotionDetector(Context context, MotionSensorSource motionSensorSource) {
-        super(context);
+    public SendMotionDetector(Context context, Intent intent, MotionSensorSource motionSensorSource) {
+        super(context, intent);
         motionSensorSource.addSensorDataListener(this);
         backPosition = new MotionDetectionState(false, 0);
         forthPosition = new MotionDetectionState(false, 0);

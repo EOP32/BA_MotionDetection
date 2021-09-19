@@ -1,4 +1,4 @@
-package com.ba.motiondetectionlib.detectors;
+package com.ba.motiondetectionlib.detection;
 
 public interface SensorDataListener {
     void detect();

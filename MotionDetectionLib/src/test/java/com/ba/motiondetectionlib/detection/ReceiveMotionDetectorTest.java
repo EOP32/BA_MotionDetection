@@ -1,26 +1,26 @@
-package com.ba.motiondetectionlib.detectors;
+package com.ba.motiondetectionlib.detection;
 
-import com.ba.motiondetectionlib.model.MotionType;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+
+import android.content.Context;
+import android.content.Intent;
+
+import com.ba.motiondetectionlib.detection.detectors.ReceiveMotionDetector;
+import com.ba.motiondetectionlib.model.Constants;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-
-import android.content.Context;
-
-import java.util.ArrayList;
-
 @RunWith(MockitoJUnitRunner.class)
 public class ReceiveMotionDetectorTest {
     private ReceiveMotionDetector detector;
-    private MotionDetectionListener listener;
+    private Intent intent;
+    private Context context;
 
     private final float VALID_GRAVITY = 8f;
     private final float VALID_ACCEL = 15f;
@@ -38,8 +38,9 @@ public class ReceiveMotionDetectorTest {
 
     @Before
     public void setup() {
-        listener = mock(MotionDetectionListener.class);
-        detector = new ReceiveMotionDetector(mock(Context.class), mock(MotionSensorSource.class));
+        intent = mock(Intent.class);
+        context = mock(Context.class);
+        detector = new ReceiveMotionDetector(context, intent, mock(MotionSensorSource.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,8 +55,9 @@ public class ReceiveMotionDetectorTest {
         Thread.sleep(50);
         detector.processGyroData(VALID_GYRO_ARR_POS);
 
-        verify(listener, times(1)).onMotionDetected(MotionType.RECEIVE);
-        verifyNoMoreInteractions(listener);
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
     }
 
     @Test
@@ -66,8 +68,9 @@ public class ReceiveMotionDetectorTest {
         Thread.sleep(10);
         detector.processAccelerationData(VALID_ACCEL_ARR);
 
-        verify(listener, times(1)).onMotionDetected(MotionType.RECEIVE);
-        verifyNoMoreInteractions(listener);
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
     }
 
     @Test
@@ -77,51 +80,55 @@ public class ReceiveMotionDetectorTest {
         Thread.sleep(120);
         detector.processGyroData(VALID_GYRO_ARR_POS);
 
-        verify(listener, times(1)).onMotionDetected(MotionType.RECEIVE);
-        verifyNoMoreInteractions(listener);
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
     }
 
     @Test
     public void multipleValidValuesShouldBeDetectedOnlyOnceGyroDifference() throws InterruptedException {
         detector.processGravityData(VALID_GRAVITY_ARR);
         Thread.sleep(10);
-
-        detector.processGyroData(INVALID_GYRO_ARR_POSITIVE);
         detector.processGyroData(VALID_GYRO_ARR_POS);
+        Thread.sleep(10);
+        detector.processGyroData(VALID_GYRO_ARR_POS);
+        Thread.sleep(10);
         detector.processAccelerationData(VALID_ACCEL_ARR);
         Thread.sleep(10);
-
         detector.processGyroData(VALID_GYRO_ARR_POS);
+        Thread.sleep(10);
         detector.processAccelerationData(VALID_ACCEL_ARR);
 
-        verify(listener, times(1)).onMotionDetected(MotionType.RECEIVE);
-        verifyNoMoreInteractions(listener);
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
     }
 
     @Test
     public void validValuesShouldBeDetectedTwice() throws InterruptedException {
         detector.processGravityData(VALID_GRAVITY_ARR);
         Thread.sleep(10);
-
-        detector.processGyroData(INVALID_GYRO_ARR_POSITIVE);
-        detector.processGyroData(VALID_GYRO_ARR_POS);
+        detector.processGyroData(new float[]{0, 6f, 0});
+        detector.processGyroData(new float[]{0, 7f, 0});
         detector.processAccelerationData(VALID_ACCEL_ARR);
         Thread.sleep(10);
-
-        detector.processGyroData(VALID_GYRO_ARR_POS);
+        detector.processGyroData(new float[]{0, 16f, 0});
+        Thread.sleep(10);
         detector.processAccelerationData(VALID_ACCEL_ARR);
         Thread.sleep(10);
-
         detector.processGravityData(VALID_GRAVITY_ARR);
-        detector.processGyroData(VALID_GYRO_ARR_POS);
+        Thread.sleep(10);
+        detector.processGyroData(new float[]{0, 26f, 0});
+        Thread.sleep(10);
         detector.processAccelerationData(VALID_ACCEL_ARR);
         Thread.sleep(10);
-
-        detector.processGyroData(VALID_GYRO_ARR_POS);
+        detector.processGyroData(new float[]{0, 26f, 0});
+        Thread.sleep(10);
         detector.processAccelerationData(VALID_ACCEL_ARR);
 
-        verify(listener, times(2)).onMotionDetected(MotionType.RECEIVE);
-        verifyNoMoreInteractions(listener);
+        verify(intent, times(2)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(2)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(2)).sendBroadcast(intent);
     }
 
     @Test
@@ -132,8 +139,9 @@ public class ReceiveMotionDetectorTest {
         Thread.sleep(50);
         detector.processAccelerationData(VALID_ACCEL_ARR);
 
-        verify(listener, times(1)).onMotionDetected(MotionType.RECEIVE);
-        verifyNoMoreInteractions(listener);
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
     }
 
     @Test
@@ -144,8 +152,9 @@ public class ReceiveMotionDetectorTest {
         Thread.sleep(50);
         detector.processGyroData(VALID_GYRO_ARR_POS);
 
-        verify(listener, times(1)).onMotionDetected(MotionType.RECEIVE);
-        verifyNoMoreInteractions(listener);
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
     }
 
     @Test
@@ -155,7 +164,7 @@ public class ReceiveMotionDetectorTest {
         Thread.sleep(150);
         detector.processGyroData(VALID_GYRO_ARR_POS);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     @Test
@@ -166,7 +175,7 @@ public class ReceiveMotionDetectorTest {
         Thread.sleep(50);
         detector.processGravityData(VALID_GRAVITY_ARR);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     @Test
@@ -176,7 +185,7 @@ public class ReceiveMotionDetectorTest {
         Thread.sleep(10);
         detector.processGyroData(VALID_GYRO_ARR_POS);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     @Test
@@ -186,7 +195,7 @@ public class ReceiveMotionDetectorTest {
         Thread.sleep(10);
         detector.processGyroData(VALID_GYRO_ARR_POS);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     @Test
@@ -196,7 +205,7 @@ public class ReceiveMotionDetectorTest {
         Thread.sleep(10);
         detector.processGyroData(VALID_GYRO_ARR_POS);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -20,7 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.ba.motiondetectionlib.R;
-import com.ba.motiondetectionlib.detectors.DetectionManager;
+import com.ba.motiondetectionlib.detection.DetectionManager;
 
 public class MotionDetectionService extends Service implements SensorEventListener {
 

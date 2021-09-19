@@ -1,4 +1,4 @@
-package com.ba.motiondetectionlib.detectors;
+package com.ba.motiondetectionlib.detection.detectors;
 
 import static com.ba.motiondetectionlib.model.Constants.DROP_MOTION;
 import static com.ba.motiondetectionlib.model.Constants.INTENT_IDENTIFIER;
@@ -12,13 +12,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.ba.motiondetectionlib.detection.MotionDetectionListener;
 import com.ba.motiondetectionlib.model.MotionType;
 
 public class MotionDetector implements MotionDetectionListener {
     private final Context context;
+    private Intent intent;
 
-    public MotionDetector(Context context) {
+    public MotionDetector(Context context, Intent intent) {
         this.context = context;
+        this.intent = intent;
     }
 
     @Override
@@ -42,7 +45,6 @@ public class MotionDetector implements MotionDetectionListener {
     }
 
     private void sendBroadcast(String motion) {
-        Intent intent = new Intent();
         intent.setAction(INTENT_IDENTIFIER);
         intent.putExtra(STRING_EXTRA_IDENTIFIER, motion);
         context.sendBroadcast(intent);

@@ -1,8 +1,14 @@
-package com.ba.motiondetectionlib.detectors;
+package com.ba.motiondetectionlib.detection;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+
+import com.ba.motiondetectionlib.detection.detectors.DropMotionDetector;
+import com.ba.motiondetectionlib.detection.detectors.ReceiveMotionDetector;
+import com.ba.motiondetectionlib.detection.detectors.ScoopMotionDetector;
+import com.ba.motiondetectionlib.detection.detectors.SendMotionDetector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +24,10 @@ public class DetectionManager implements IDetectionManager, MotionSensorSource {
 
     @Override
     public void startDetectors(Context context, MotionSensorSource sensorSource) {
-        new SendMotionDetector(context, sensorSource);
-        new ReceiveMotionDetector(context, sensorSource);
-        new DropMotionDetector(context, sensorSource);
-        new ScoopMotionDetector(context, sensorSource);
+        new SendMotionDetector(context, new Intent(), sensorSource);
+        new ReceiveMotionDetector(context, new Intent(), sensorSource);
+        new DropMotionDetector(context, new Intent(), sensorSource);
+        new ScoopMotionDetector(context, new Intent(), sensorSource);
     }
 
     @Override

@@ -1,24 +1,26 @@
-package com.ba.motiondetectionlib.detectors;
+package com.ba.motiondetectionlib.detection;
 
-import com.ba.motiondetectionlib.model.Constants;
-import com.ba.motiondetectionlib.model.MotionType;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 import android.content.Context;
 import android.content.Intent;
 
+import com.ba.motiondetectionlib.detection.detectors.DropMotionDetector;
+import com.ba.motiondetectionlib.model.Constants;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+
 @RunWith(MockitoJUnitRunner.class)
 public class DropMotionDetectorTest {
     private DropMotionDetector detector;
-    private MotionDetectionListener listener;
     private Intent intent;
+    private Context context;
 
     private final float VALID_GRAVITY_POSITIVE = 8f;
     private final float VALID_ACCEL = 20f;
@@ -35,9 +37,9 @@ public class DropMotionDetectorTest {
 
     @Before
     public void setup() {
-        listener = mock(MotionDetectionListener.class);
         intent = mock(Intent.class);
-        detector = new DropMotionDetector(mock(Context.class), mock(MotionSensorSource.class));
+        context = mock(Context.class);
+        detector = new DropMotionDetector(context, intent, mock(MotionSensorSource.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -54,8 +56,9 @@ public class DropMotionDetectorTest {
         Thread.sleep(50);
         detector.processAccelerationData(VALID_ACCEL_ARR_NEG);
 
-        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, "DropMotion");
-        verifyNoMoreInteractions(listener);
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.DROP_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
     }
 
     @Test
@@ -76,8 +79,9 @@ public class DropMotionDetectorTest {
         detector.processAccelerationData(new float[]{0, 0, -16.1f});
         Thread.sleep(50);
 
-        verify(listener, times(1)).onMotionDetected(MotionType.DROP);
-        verifyNoMoreInteractions(listener);
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.DROP_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
     }
 
     @Test
@@ -90,8 +94,9 @@ public class DropMotionDetectorTest {
         Thread.sleep(200);
         detector.processAccelerationData(VALID_ACCEL_ARR_NEG);
 
-        verify(listener, times(1)).onMotionDetected(MotionType.DROP);
-        verifyNoMoreInteractions(listener);
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.DROP_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
     }
 
     @Test
@@ -104,7 +109,7 @@ public class DropMotionDetectorTest {
         Thread.sleep(450);
         detector.processAccelerationData(VALID_ACCEL_ARR_NEG);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     @Test
@@ -117,7 +122,7 @@ public class DropMotionDetectorTest {
         Thread.sleep(50);
         detector.processAccelerationData(INVALID_ACCEL_ARR_NEG);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     @Test
@@ -130,7 +135,7 @@ public class DropMotionDetectorTest {
         Thread.sleep(50);
         detector.processAccelerationData(VALID_ACCEL_ARR_NEG);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     @Test
@@ -143,7 +148,7 @@ public class DropMotionDetectorTest {
         Thread.sleep(50);
         detector.processAccelerationData(VALID_ACCEL_ARR_NEG);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     @Test
@@ -156,7 +161,7 @@ public class DropMotionDetectorTest {
         Thread.sleep(50);
         detector.processGravityData(VALID_GRAVITY_ARR_POS);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     @Test
@@ -169,7 +174,7 @@ public class DropMotionDetectorTest {
         Thread.sleep(50);
         detector.processGravityData(VALID_GRAVITY_ARR_POS);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     @Test
@@ -181,7 +186,7 @@ public class DropMotionDetectorTest {
         detector.processGravityData(VALID_GRAVITY_ARR_NEG);
         Thread.sleep(50);
 
-        verifyZeroInteractions(listener);
+        verifyZeroInteractions(intent);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

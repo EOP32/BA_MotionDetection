@@ -1,5 +1,8 @@
-package com.ba.motiondetectionlib.detectors;
+package com.ba.motiondetectionlib.detection.detectors;
 
+import com.ba.motiondetectionlib.detection.MotionSensorSource;
+import com.ba.motiondetectionlib.detection.SensorDataListener;
+import com.ba.motiondetectionlib.detection.detectors.MotionDetector;
 import com.ba.motiondetectionlib.model.MotionDetectionState;
 import com.ba.motiondetectionlib.model.MotionType;
 
@@ -9,6 +12,7 @@ import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALU
 import static com.ba.motiondetectionlib.model.Constants.MIN_ROTATION_VALUE;
 
 import android.content.Context;
+import android.content.Intent;
 
 public class ReceiveMotionDetector extends MotionDetector implements SensorDataListener {
 
@@ -17,8 +21,8 @@ public class ReceiveMotionDetector extends MotionDetector implements SensorDataL
     private boolean portraitMode;
     private float before;
 
-    public ReceiveMotionDetector(Context context, MotionSensorSource motionSensorSource) {
-        super(context);
+    public ReceiveMotionDetector(Context context, Intent intent, MotionSensorSource motionSensorSource) {
+        super(context, intent);
         motionSensorSource.addSensorDataListener(this);
         rotationGesture = new MotionDetectionState(false, 0);
         upMotionGesture = new MotionDetectionState(false, 0);
