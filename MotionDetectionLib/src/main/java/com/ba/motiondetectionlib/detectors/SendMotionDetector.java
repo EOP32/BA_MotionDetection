@@ -8,7 +8,9 @@ import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALU
 import static com.ba.motiondetectionlib.model.Constants.MIN_SEND_ACCELERATION_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_SEND_ROTATION_VALUE;
 
-public class SendMotionDetector implements IDetector {
+import android.content.Context;
+
+public class SendMotionDetector extends MotionDetector implements SensorDataListener {
 
     private final MotionDetectionState motionRight;
     private final MotionDetectionState motionLeft;
@@ -16,16 +18,16 @@ public class SendMotionDetector implements IDetector {
     private final MotionDetectionState rotationCounterClockWise;
     private final MotionDetectionState backPosition;
     private final MotionDetectionState forthPosition;
-    private final DetectionSuccessCallback callback;
 
-    public SendMotionDetector(DetectionSuccessCallback callback) {
+    public SendMotionDetector(Context context, MotionSensorSource motionSensorSource) {
+        super(context);
+        motionSensorSource.addSensorDataListener(this);
         backPosition = new MotionDetectionState(false, 0);
         forthPosition = new MotionDetectionState(false, 0);
         motionRight = new MotionDetectionState(false, 0);
         motionLeft = new MotionDetectionState(false, 0);
         rotationClockWise = new MotionDetectionState(false, 0);
         rotationCounterClockWise = new MotionDetectionState(false, 0);
-        this.callback = callback;
     }
 
     @Override
@@ -45,7 +47,7 @@ public class SendMotionDetector implements IDetector {
                 throwTimeDiffRight < maxTimeDiff &&
                 forthPositionTimeDiff < backPositionTimeDiff) {
 
-            callback.onMotionDetected(MotionType.SEND);
+            onMotionDetected(MotionType.SEND);
             reset();
         }
 
@@ -57,12 +59,15 @@ public class SendMotionDetector implements IDetector {
                 throwTimeDiffLeft < maxTimeDiff &&
                 backPositionTimeDiff < forthPositionTimeDiff) {
 
-            callback.onMotionDetected(MotionType.SEND);
+            onMotionDetected(MotionType.SEND);
             reset();
         }
     }
 
-    public void processAccelerationData(float xValue) {
+    @Override
+    public void processLinearAccelerationData(float[] values) {
+        float xValue = values[0];
+
         if (xValue > MIN_SEND_ACCELERATION_VALUE) {
             motionRight.detected = true;
             motionRight.timestamp = timestamp();
@@ -75,7 +80,10 @@ public class SendMotionDetector implements IDetector {
         }
     }
 
-    public void processGravityData(float xValue) {
+    @Override
+    public void processGravityData(float[] values) {
+        float xValue = values[0];
+
         if (xValue < -MIN_GENERAL_GRAVITY_VALUE) {
             backPosition.detected = true;
             backPosition.timestamp = timestamp();
@@ -88,7 +96,10 @@ public class SendMotionDetector implements IDetector {
         }
     }
 
-    public void processGyroData(float yValue) {
+    @Override
+    public void processGyroData(float[] values) {
+        float yValue = values[1];
+
         if (yValue > MIN_SEND_ROTATION_VALUE) {
             rotationClockWise.detected = true;
             rotationClockWise.timestamp = timestamp();
@@ -102,10 +113,6 @@ public class SendMotionDetector implements IDetector {
         }
     }
 
-    private long timestamp() {
-        return System.currentTimeMillis();
-    }
-
     private void reset() {
         backPosition.detected = false;
         forthPosition.detected = false;
@@ -113,5 +120,11 @@ public class SendMotionDetector implements IDetector {
         motionLeft.detected = false;
         rotationClockWise.detected = false;
         rotationCounterClockWise.detected = false;
+    }
+
+
+    @Override
+    public void processAccelerationData(float[] values) {
+
     }
 }

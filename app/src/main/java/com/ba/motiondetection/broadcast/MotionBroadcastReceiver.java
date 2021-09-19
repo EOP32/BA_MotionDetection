@@ -1,9 +1,11 @@
-package com.ba.motiondetectionlib.broadcast;
+package com.ba.motiondetection.broadcast;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
+import com.ba.motiondetectionlib.model.Constants;
 import com.ba.motiondetectionlib.model.MotionType;
 
 import static com.ba.motiondetectionlib.model.Constants.DROP_MOTION;
@@ -14,28 +16,29 @@ import static com.ba.motiondetectionlib.model.Constants.STRING_EXTRA_IDENTIFIER;
 
 public class MotionBroadcastReceiver extends BroadcastReceiver {
 
-    private MotionDetectionListener listener;
+    private BroadcastListener listener;
 
-    public MotionBroadcastReceiver(MotionDetectionListener listener) {
+    public MotionBroadcastReceiver(BroadcastListener listener) {
         this.listener = listener;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         String motion = intent.getStringExtra(STRING_EXTRA_IDENTIFIER);
+        Log.d(Constants.TAG, "Broadcast received of type " + motion);
 
         switch (motion) {
             case SEND_MOTION:
-                listener.motionDetected(MotionType.SEND);
+                listener.onMotionBroadcastReceived(MotionType.SEND);
                 break;
             case RECEIVE_MOTION:
-                listener.motionDetected(MotionType.RECEIVE);
+                listener.onMotionBroadcastReceived(MotionType.RECEIVE);
                 break;
             case DROP_MOTION:
-                listener.motionDetected(MotionType.DROP);
+                listener.onMotionBroadcastReceived(MotionType.DROP);
                 break;
             case SCOOP_MOTION:
-                listener.motionDetected(MotionType.SCOOP);
+                listener.onMotionBroadcastReceived(MotionType.SCOOP);
                 break;
             default:
                 break;

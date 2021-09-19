@@ -8,21 +8,24 @@ import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_ACCELERATION
 import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_ROTATION_VALUE;
 
-public class ReceiveMotionDetector implements IDetector {
+import android.content.Context;
 
-    private final DetectionSuccessCallback callback;
+public class ReceiveMotionDetector extends MotionDetector implements SensorDataListener {
+
     private final MotionDetectionState rotationGesture;
     private final MotionDetectionState upMotionGesture;
     private boolean portraitMode;
     private float before;
 
-    public ReceiveMotionDetector(DetectionSuccessCallback callback) {
-        this.callback = callback;
+    public ReceiveMotionDetector(Context context, MotionSensorSource motionSensorSource) {
+        super(context);
+        motionSensorSource.addSensorDataListener(this);
         rotationGesture = new MotionDetectionState(false, 0);
         upMotionGesture = new MotionDetectionState(false, 0);
         before = 0;
     }
 
+    @Override
     public void detect() {
         long timeNow = timestamp();
         long diffR = timeNow - rotationGesture.timestamp;
@@ -35,12 +38,15 @@ public class ReceiveMotionDetector implements IDetector {
                 diffR < maxTimeDiff &&
                 diffU < maxTimeDiff) {
 
-            callback.onMotionDetected(MotionType.RECEIVE);
+            onMotionDetected(MotionType.RECEIVE);
             reset();
         }
     }
 
-    public void processAccelerationData(float yValue) {
+    @Override
+    public void processAccelerationData(float[] values) {
+        float yValue = values[1];
+
         if (yValue > MIN_GENERAL_ACCELERATION_VALUE) {
             upMotionGesture.detected = true;
             upMotionGesture.timestamp = timestamp();
@@ -48,7 +54,15 @@ public class ReceiveMotionDetector implements IDetector {
         }
     }
 
-    public void processGyroData(float yValue) {
+    @Override
+    public void processGravityData(float[] values) {
+        float yValue = values[1];
+        portraitMode = yValue > MIN_GENERAL_GRAVITY_VALUE;
+    }
+
+    @Override
+    public void processGyroData(float[] values) {
+        float yValue = values[1];
         float gyroDiff = before - yValue;
 
         if (Math.abs(gyroDiff) > MIN_ROTATION_VALUE) {
@@ -59,16 +73,12 @@ public class ReceiveMotionDetector implements IDetector {
         before = yValue;
     }
 
-    public void processGravityData(float yValue) {
-        portraitMode = yValue > MIN_GENERAL_GRAVITY_VALUE;
-    }
-
     private void reset() {
         rotationGesture.detected = false;
         upMotionGesture.detected = false;
     }
 
-    private long timestamp() {
-        return System.currentTimeMillis();
+    @Override
+    public void processLinearAccelerationData(float[] values) {
     }
 }

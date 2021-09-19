@@ -1,5 +1,7 @@
 package com.ba.motiondetectionlib.service;
 
+import static com.ba.motiondetectionlib.model.Constants.TAG;
+
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,32 +12,17 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.ba.motiondetectionlib.R;
-import com.ba.motiondetectionlib.detectors.DetectionSuccessCallback;
-import com.ba.motiondetectionlib.detectors.DropMotionDetector;
-import com.ba.motiondetectionlib.detectors.ReceiveMotionDetector;
-import com.ba.motiondetectionlib.detectors.ScoopMotionDetector;
-import com.ba.motiondetectionlib.detectors.SendMotionDetector;
-import com.ba.motiondetectionlib.model.MotionType;
+import com.ba.motiondetectionlib.detectors.DetectionManager;
 
-import static com.ba.motiondetectionlib.model.Constants.DROP_MOTION;
-import static com.ba.motiondetectionlib.model.Constants.INTENT_IDENTIFIER;
-import static com.ba.motiondetectionlib.model.Constants.RECEIVE_MOTION;
-import static com.ba.motiondetectionlib.model.Constants.SCOOP_MOTION;
-import static com.ba.motiondetectionlib.model.Constants.SEND_MOTION;
-import static com.ba.motiondetectionlib.model.Constants.STRING_EXTRA_IDENTIFIER;
-import static com.ba.motiondetectionlib.model.Constants.TAG;
-
-public class MotionDetectionService extends Service implements DetectionSuccessCallback, SensorEventListener {
+public class MotionDetectionService extends Service implements SensorEventListener {
 
     private final String CHANNEL_ID = "Motion_Detection_Service";
 
@@ -45,16 +32,13 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
     private Sensor gravitySensor;
     private Sensor gyroscopeSensor;
 
-    private SendMotionDetector sendDetector;
-    private ReceiveMotionDetector receiveDetector;
-    private DropMotionDetector dropDetector;
-    private ScoopMotionDetector scoopDetector;
+    private DetectionManager detectionManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        initializeAndRegisterSensors();
         initializeDetectors();
+        initializeAndRegisterSensors();
         createNotificationChannel();
     }
 
@@ -68,13 +52,15 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
     @Override
     public void onDestroy() {
         unregisterSensors();
+        detectionManager.removeSensorDataListeners();
         stopSelf();
         stopForeground(true);
+
         Log.d(TAG, "Service stopped.");
     }
 
     private void initializeAndRegisterSensors() {
-        sensorManager = (SensorManager) getSystemService(this.SENSOR_SERVICE);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         linearAccelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         accelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -97,68 +83,16 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
         sensorManager.unregisterListener(this, accelerationSensor);
         sensorManager.unregisterListener(this, gravitySensor);
         sensorManager.unregisterListener(this, gyroscopeSensor);
-        Log.d(TAG, "Shut down sensors.");
+        Log.d(TAG, "All sensors shut down.");
     }
 
     private void initializeDetectors() {
-        sendDetector = new SendMotionDetector(this);
-        receiveDetector = new ReceiveMotionDetector(this);
-        dropDetector = new DropMotionDetector(this);
-        scoopDetector = new ScoopMotionDetector(this);
-    }
-
-    @Override
-    public void onMotionDetected(MotionType type) {
-        switch (type) {
-            case SEND:
-                sendBroadcast(SEND_MOTION);
-                break;
-            case RECEIVE:
-                sendBroadcast(RECEIVE_MOTION);
-                break;
-            case DROP:
-                sendBroadcast(DROP_MOTION);
-                break;
-            case SCOOP:
-                sendBroadcast(SCOOP_MOTION);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void sendBroadcast(String motion) {
-        Intent intent = new Intent();
-        intent.setAction(INTENT_IDENTIFIER);
-        intent.putExtra(STRING_EXTRA_IDENTIFIER, motion);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-        Log.d(TAG, "Motion detection broadcast sent. " + motion);
+        detectionManager = new DetectionManager(this);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        switch (event.sensor.getType()) {
-            case Sensor.TYPE_ACCELEROMETER:
-                receiveDetector.processAccelerationData(event.values[1]);
-                dropDetector.processAccelerationData(event.values[2]);
-                scoopDetector.processAccelerationData(event.values[2]);
-                break;
-            case Sensor.TYPE_LINEAR_ACCELERATION:
-                sendDetector.processAccelerationData(event.values[0]);
-                break;
-            case Sensor.TYPE_GRAVITY:
-                dropDetector.processGravityData(event.values[2]);
-                receiveDetector.processGravityData(event.values[1]);
-                scoopDetector.processGravityData(event.values[2]);
-                sendDetector.processGravityData(event.values[0]);
-                break;
-            case Sensor.TYPE_GYROSCOPE:
-                receiveDetector.processGyroData(event.values[1]);
-                sendDetector.processGyroData(event.values[1]);
-                break;
-            default:
-                break;
-        }
+        detectionManager.forwardSensorData(event);
     }
 
     private void createNotificationChannel() {
@@ -194,11 +128,5 @@ public class MotionDetectionService extends Service implements DetectionSuccessC
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    public class LocalBinder extends Binder {
-        public MotionDetectionService getService() {
-            return MotionDetectionService.this;
-        }
     }
 }

@@ -8,22 +8,24 @@ import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_ACCELERATION_VALUE;
 
-public class ScoopMotionDetector implements IDetector {
+import android.content.Context;
+
+public class ScoopMotionDetector extends MotionDetector implements SensorDataListener {
 
     private MotionDetectionState liftMotion;
     private MotionDetectionState dropMotion;
     private MotionDetectionState cameraDownPosition;
     private MotionDetectionState cameraUpPosition;
-    private DetectionSuccessCallback callback;
     private float before;
 
-    public ScoopMotionDetector(DetectionSuccessCallback callback) {
+    public ScoopMotionDetector(Context context, MotionSensorSource motionSensorSource) {
+        super(context);
+        motionSensorSource.addSensorDataListener(this);
         cameraDownPosition = new MotionDetectionState(false, 0);
         cameraUpPosition = new MotionDetectionState(false, 0);
         liftMotion = new MotionDetectionState(false, 0);
         dropMotion = new MotionDetectionState(false, 0);
         before = 0;
-        this.callback = callback;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class ScoopMotionDetector implements IDetector {
         long cameraDownTimeDiff = timeNow - cameraDownPosition.timestamp;
         long liftTimeDiff = timeNow - liftMotion.timestamp;
         long dropTimeDiff = timeNow - dropMotion.timestamp;
-        
+
         if (cameraDownPosition.detected &&
                 cameraUpPosition.detected &&
                 liftMotion.detected &&
@@ -43,12 +45,15 @@ public class ScoopMotionDetector implements IDetector {
                 cameraDownTimeDiff < dropTimeDiff &&
                 liftTimeDiff < dropTimeDiff) {
 
-            callback.onMotionDetected(MotionType.SCOOP);
+            onMotionDetected(MotionType.SCOOP);
             reset();
         }
     }
 
-    public void processAccelerationData(float zValue) {
+    @Override
+    public void processAccelerationData(float[] values) {
+        float zValue = values[2];
+
         if (zValue > MIN_SCOOP_ACCELERATION_VALUE) {
             liftMotion.detected = true;
             liftMotion.timestamp = timestamp();
@@ -61,7 +66,10 @@ public class ScoopMotionDetector implements IDetector {
         }
     }
 
-    public void processGravityData(float zValue) {
+    @Override
+    public void processGravityData(float[] values) {
+        float zValue = values[2];
+
         if (zValue < -MIN_GENERAL_GRAVITY_VALUE && significantGravityChange(zValue)) {
             cameraUpPosition.detected = true;
             cameraUpPosition.timestamp = timestamp();
@@ -91,7 +99,13 @@ public class ScoopMotionDetector implements IDetector {
         dropMotion.detected = false;
     }
 
-    private long timestamp() {
-        return System.currentTimeMillis();
+    @Override
+    public void processGyroData(float[] values) {
+
+    }
+
+    @Override
+    public void processLinearAccelerationData(float[] values) {
+
     }
 }

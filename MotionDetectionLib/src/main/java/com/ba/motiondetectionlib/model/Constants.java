@@ -5,6 +5,7 @@ package com.ba.motiondetectionlib.model;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public class Constants {
+    
     // ------> general constants for motion detection
     public static final String INTENT_IDENTIFIER = "com.ba.motiondetection.intent.action";
     public static final String STRING_EXTRA_IDENTIFIER = "com.ba.motiondetection.intent.string.extra";

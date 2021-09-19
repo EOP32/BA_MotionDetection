@@ -8,24 +8,26 @@ import static com.ba.motiondetectionlib.model.Constants.MAX_GRAVITY;
 import static com.ba.motiondetectionlib.model.Constants.MIN_DROP_ACCELERATION_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
 
-public class DropMotionDetector implements IDetector {
+import android.content.Context;
+
+public class DropMotionDetector extends MotionDetector implements SensorDataListener {
 
     private final MotionDetectionState dropMotion;
     private final MotionDetectionState liftMotion;
     private final MotionDetectionState cameraDownPosition;
     private final MotionDetectionState cameraUpPosition;
-    private final DetectionSuccessCallback callback;
     private float before;
     private float gravityCache;
 
-    public DropMotionDetector(DetectionSuccessCallback callback) {
+    public DropMotionDetector(Context ctx, MotionSensorSource motionSensorSource) {
+        super(ctx);
+        motionSensorSource.addSensorDataListener(this);
         cameraDownPosition = new MotionDetectionState(false, 0);
         cameraUpPosition = new MotionDetectionState(false, 0);
         dropMotion = new MotionDetectionState(false, 0);
         liftMotion = new MotionDetectionState(false, 0);
         before = 0;
         gravityCache = 0;
-        this.callback = callback;
     }
 
     @Override
@@ -46,12 +48,15 @@ public class DropMotionDetector implements IDetector {
                 cameraUpTimeDiff < liftTimeDiff &&
                 dropTimeDiff < cameraUpTimeDiff) {
 
-            callback.onMotionDetected(MotionType.DROP);
+            onMotionDetected(MotionType.DROP);
             reset();
         }
     }
 
-    public void processAccelerationData(float zValue) {
+    @Override
+    public void processAccelerationData(float[] values) {
+        float zValue = values[2];
+
         if (zValue < MIN_DROP_ACCELERATION_VALUE && gravityCache < -MIN_GENERAL_GRAVITY_VALUE) {
             dropMotion.detected = true;
             dropMotion.timestamp = timestamp();
@@ -64,7 +69,10 @@ public class DropMotionDetector implements IDetector {
         }
     }
 
-    public void processGravityData(float zValue) {
+    @Override
+    public void processGravityData(float[] values) {
+        float zValue = values[2];
+
         if (zValue < -MIN_GENERAL_GRAVITY_VALUE && significantGravityChange()) {
             cameraUpPosition.detected = true;
             cameraUpPosition.timestamp = timestamp();
@@ -91,7 +99,13 @@ public class DropMotionDetector implements IDetector {
         liftMotion.detected = false;
     }
 
-    private long timestamp() {
-        return System.currentTimeMillis();
+    @Override
+    public void processGyroData(float[] values) {
+
+    }
+
+    @Override
+    public void processLinearAccelerationData(float[] values) {
+
     }
 }

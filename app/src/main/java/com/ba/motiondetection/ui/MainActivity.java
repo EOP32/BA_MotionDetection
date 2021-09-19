@@ -1,4 +1,4 @@
-package com.ba.motiondetection;
+package com.ba.motiondetection.ui;
 
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -6,22 +6,21 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import com.ba.motiondetectionlib.broadcast.MotionBroadcastReceiver;
-import com.ba.motiondetectionlib.broadcast.MotionDetectionListener;
+import com.ba.motiondetection.R;
+import com.ba.motiondetection.broadcast.BroadcastListener;
+import com.ba.motiondetection.broadcast.MotionBroadcastReceiver;
 import com.ba.motiondetectionlib.model.Constants;
 import com.ba.motiondetectionlib.model.MotionType;
 import com.ba.motiondetectionlib.service.ServiceController;
 
-public class MainActivity extends AppCompatActivity implements MotionDetectionListener {
+public class MainActivity extends AppCompatActivity implements BroadcastListener {
 
     private ServiceController serviceController;
     private MotionBroadcastReceiver motionBroadcastReceiver;
@@ -67,22 +66,29 @@ public class MainActivity extends AppCompatActivity implements MotionDetectionLi
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constants.INTENT_IDENTIFIER);
-        LocalBroadcastManager.getInstance(this).registerReceiver(motionBroadcastReceiver, filter);
+        registerReceiver(motionBroadcastReceiver, filter);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(motionBroadcastReceiver);
+        unregisterReceiver(motionBroadcastReceiver);
         serviceController.stopDetectionService();
+    }
+
+    private void reset() {
+        sendView.setCardBackgroundColor(Color.WHITE);
+        receiveView.setCardBackgroundColor(Color.WHITE);
+        dropView.setCardBackgroundColor(Color.WHITE);
+        scoopView.setCardBackgroundColor(Color.WHITE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void motionDetected(MotionType type) {
+    public void onMotionBroadcastReceived(MotionType motionType) {
         reset();
 
-        switch (type) {
+        switch (motionType) {
             case SEND:
                 sendView.setCardBackgroundColor(Color.GREEN);
                 sendDetected++;
@@ -109,12 +115,5 @@ public class MainActivity extends AppCompatActivity implements MotionDetectionLi
 
         Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
-    }
-
-    private void reset() {
-        sendView.setCardBackgroundColor(Color.WHITE);
-        receiveView.setCardBackgroundColor(Color.WHITE);
-        dropView.setCardBackgroundColor(Color.WHITE);
-        scoopView.setCardBackgroundColor(Color.WHITE);
     }
 }
