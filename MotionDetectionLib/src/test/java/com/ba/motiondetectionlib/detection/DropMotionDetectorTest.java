@@ -42,10 +42,6 @@ public class DropMotionDetectorTest {
         detector = new DropMotionDetector(context, intent, mock(MotionSensorSource.class));
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //                   tests for motions executed with the right hand                           //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-
     @Test
     public void validSensorDataAndValidTimeDifferenceSuccess() throws InterruptedException {
         detector.processGravityData(VALID_GRAVITY_ARR_POS);
@@ -59,6 +55,31 @@ public class DropMotionDetectorTest {
         verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
         verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.DROP_MOTION);
         verify(context, times(1)).sendBroadcast(intent);
+    }
+
+    @Test
+    public void validSensorDataShouldBeDetectedTwiceSuccess() throws InterruptedException {
+        detector.processGravityData(VALID_GRAVITY_ARR_POS);
+        Thread.sleep(50);
+        detector.processAccelerationData(VALID_ACCEL_ARR_POS);
+        Thread.sleep(50);
+        detector.processGravityData(VALID_GRAVITY_ARR_NEG);
+        Thread.sleep(50);
+        detector.processAccelerationData(VALID_ACCEL_ARR_NEG);
+
+        Thread.sleep(500);
+
+        detector.processGravityData(VALID_GRAVITY_ARR_POS);
+        Thread.sleep(50);
+        detector.processAccelerationData(VALID_ACCEL_ARR_POS);
+        Thread.sleep(50);
+        detector.processGravityData(VALID_GRAVITY_ARR_NEG);
+        Thread.sleep(50);
+        detector.processAccelerationData(VALID_ACCEL_ARR_NEG);
+
+        verify(intent, times(2)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(2)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.DROP_MOTION);
+        verify(context, times(2)).sendBroadcast(intent);
     }
 
     @Test
@@ -188,8 +209,4 @@ public class DropMotionDetectorTest {
 
         verifyZeroInteractions(intent);
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //                   tests for motions executed with the left hand                            //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 }

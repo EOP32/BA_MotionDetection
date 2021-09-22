@@ -33,6 +33,7 @@ public class ReceiveMotionDetectorTest {
     private final float[] VALID_GYRO_ARR_NEG = new float[]{0, VALID_GYRO_NEGATIVE, 0};
 
     private final float[] INVALID_GYRO_ARR_POSITIVE = new float[]{0, 6f, 0};
+    private final float[] INVALID_GYRO_ARR_NEGATIVE = new float[]{0, -6f, 0};
     private final float[] INVALID_GRAVITY_ARR = new float[]{0, 5f, 0};
     private final float[] INVALID_ACCEL_ARR = new float[]{0, 5f, 0};
 
@@ -44,21 +45,8 @@ public class ReceiveMotionDetectorTest {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    //                   tests for motions executed with the right hand                           //
+    //         tests for motions executed with the right hand (== counter clockwise)              //
     ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    @Test
-    public void validValuesForClockwiseTurnSuccess() throws InterruptedException {
-        detector.processGravityData(VALID_GRAVITY_ARR);
-        Thread.sleep(50);
-        detector.processAccelerationData(VALID_ACCEL_ARR);
-        Thread.sleep(50);
-        detector.processGyroData(VALID_GYRO_ARR_POS);
-
-        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
-        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
-        verify(context, times(1)).sendBroadcast(intent);
-    }
 
     @Test
     public void validValuesForCounterClockwiseTurnSuccess() throws InterruptedException {
@@ -78,6 +66,150 @@ public class ReceiveMotionDetectorTest {
         detector.processGravityData(VALID_GRAVITY_ARR);
         detector.processAccelerationData(VALID_ACCEL_ARR);
         Thread.sleep(120);
+        detector.processGyroData(VALID_GYRO_ARR_NEG);
+
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
+    }
+
+    @Test
+    public void multipleValidValuesShouldBeDetectedOnlyOnce() throws InterruptedException {
+        // gyro data difference not greater than the defined value
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(VALID_GYRO_ARR_NEG);
+        Thread.sleep(10);
+        detector.processGyroData(VALID_GYRO_ARR_NEG);
+        Thread.sleep(10);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(VALID_GYRO_ARR_NEG);
+        Thread.sleep(10);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
+    }
+
+    @Test
+    public void validValuesShouldBeDetectedTwice() throws InterruptedException {
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(new float[]{0, -6f, 0});
+        detector.processGyroData(new float[]{0, -7f, 0});
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(new float[]{0, -16f, 0});
+        Thread.sleep(10);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(10);
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(new float[]{0, -26f, 0});
+        Thread.sleep(10);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(new float[]{0, -26f, 0});
+        Thread.sleep(10);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+
+        verify(intent, times(2)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(2)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(2)).sendBroadcast(intent);
+    }
+
+    @Test
+    public void validValuesDiffOrderSuccess() throws InterruptedException {
+        detector.processGyroData(VALID_GYRO_ARR_NEG);
+        Thread.sleep(50);
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        Thread.sleep(50);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
+    }
+
+    @Test
+    public void validValuesDiffOrderSuccess2() throws InterruptedException {
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(50);
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        Thread.sleep(50);
+        detector.processGyroData(VALID_GYRO_ARR_NEG);
+
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
+    }
+
+    @Test
+    public void validValuesBorderlineTimeDifferenceFail() throws InterruptedException {
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(150);
+        detector.processGyroData(VALID_GYRO_ARR_POS);
+
+        verifyZeroInteractions(intent);
+    }
+
+    @Test
+    public void validValuesDifferentOrderFailGravityDataTooLate() throws InterruptedException {
+        // graviry too late -> no information about display orientation yet
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(50);
+        detector.processGyroData(VALID_GYRO_ARR_NEG);
+        Thread.sleep(50);
+        detector.processGravityData(VALID_GRAVITY_ARR);
+
+        verifyZeroInteractions(intent);
+    }
+
+    @Test
+    public void validValuesExceptGyroShouldFail() throws InterruptedException {
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        Thread.sleep(10);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(INVALID_GYRO_ARR_NEGATIVE);
+
+        verifyZeroInteractions(intent);
+    }
+
+    @Test
+    public void validValuesExceptGravityShouldFail() throws InterruptedException {
+        detector.processGravityData(INVALID_GRAVITY_ARR);
+        Thread.sleep(10);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(VALID_GYRO_ARR_NEG);
+
+        verifyZeroInteractions(intent);
+    }
+
+    @Test
+    public void validValuesExceptAccelShouldFail() throws InterruptedException {
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        detector.processAccelerationData(INVALID_ACCEL_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(VALID_GYRO_ARR_NEG);
+
+        verifyZeroInteractions(intent);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //            tests for motions executed with the left hand ( == clockwise)                   //
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    public void validValuesForClockwiseTurnSuccess() throws InterruptedException {
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        Thread.sleep(50);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(50);
         detector.processGyroData(VALID_GYRO_ARR_POS);
 
         verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
@@ -86,7 +218,19 @@ public class ReceiveMotionDetectorTest {
     }
 
     @Test
-    public void multipleValidValuesShouldBeDetectedOnlyOnceGyroDifference() throws InterruptedException {
+    public void validValuesBorderlineTimeDifferenceClockwiseSuccess() throws InterruptedException {
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(120);
+        detector.processGyroData(VALID_GYRO_ARR_POS);
+
+        verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
+        verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.RECEIVE_MOTION);
+        verify(context, times(1)).sendBroadcast(intent);
+    }
+
+    @Test
+    public void multipleValidValuesShouldBeDetectedOnlyOnceClockwise() throws InterruptedException {
         detector.processGravityData(VALID_GRAVITY_ARR);
         Thread.sleep(10);
         detector.processGyroData(VALID_GYRO_ARR_POS);
@@ -105,7 +249,7 @@ public class ReceiveMotionDetectorTest {
     }
 
     @Test
-    public void validValuesShouldBeDetectedTwice() throws InterruptedException {
+    public void validValuesShouldBeDetectedTwiceClockwise() throws InterruptedException {
         detector.processGravityData(VALID_GRAVITY_ARR);
         Thread.sleep(10);
         detector.processGyroData(new float[]{0, 6f, 0});
@@ -132,7 +276,7 @@ public class ReceiveMotionDetectorTest {
     }
 
     @Test
-    public void validValuesDiffOrderSuccess() throws InterruptedException {
+    public void validValuesDiffOrderSuccessClockwise() throws InterruptedException {
         detector.processGyroData(VALID_GYRO_ARR_POS);
         Thread.sleep(50);
         detector.processGravityData(VALID_GRAVITY_ARR);
@@ -145,7 +289,7 @@ public class ReceiveMotionDetectorTest {
     }
 
     @Test
-    public void validValuesDifferentOrderSuccess() throws InterruptedException {
+    public void validValuesDiffOrderSuccessClockwise2() throws InterruptedException {
         detector.processAccelerationData(VALID_ACCEL_ARR);
         Thread.sleep(50);
         detector.processGravityData(VALID_GRAVITY_ARR);
@@ -158,17 +302,18 @@ public class ReceiveMotionDetectorTest {
     }
 
     @Test
-    public void validValuesBorderlineTimeDifferenceFail() throws InterruptedException {
+    public void validValuesBorderlineTimeDifferenceFailClockwise() throws InterruptedException {
         detector.processGravityData(VALID_GRAVITY_ARR);
         detector.processAccelerationData(VALID_ACCEL_ARR);
         Thread.sleep(150);
-        detector.processGyroData(VALID_GYRO_ARR_POS);
+        detector.processGyroData(VALID_GYRO_ARR_NEG);
 
         verifyZeroInteractions(intent);
     }
 
     @Test
-    public void validValuesDifferentOrderFailGravityDataTooLate() throws InterruptedException {
+    public void validValuesDifferentOrderFailGravityDataTooLateClockwise() throws InterruptedException {
+        // graviry too late -> no information about display orientation yet
         detector.processAccelerationData(VALID_ACCEL_ARR);
         Thread.sleep(50);
         detector.processGyroData(VALID_GYRO_ARR_POS);
@@ -179,8 +324,19 @@ public class ReceiveMotionDetectorTest {
     }
 
     @Test
-    public void validValuesExceptGyroShouldFail() throws InterruptedException {
+    public void validValuesExceptGyroShouldFailClockwise() throws InterruptedException {
+        detector.processGravityData(VALID_GRAVITY_ARR);
+        detector.processAccelerationData(VALID_ACCEL_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(INVALID_GYRO_ARR_POSITIVE);
+
+        verifyZeroInteractions(intent);
+    }
+
+    @Test
+    public void validValuesExceptGravityShouldFailClockwise() throws InterruptedException {
         detector.processGravityData(INVALID_GRAVITY_ARR);
+        Thread.sleep(10);
         detector.processAccelerationData(VALID_ACCEL_ARR);
         Thread.sleep(10);
         detector.processGyroData(VALID_GYRO_ARR_POS);
@@ -189,17 +345,7 @@ public class ReceiveMotionDetectorTest {
     }
 
     @Test
-    public void validValuesExceptGravityShouldFail() throws InterruptedException {
-        detector.processGravityData(INVALID_GYRO_ARR_POSITIVE);
-        detector.processAccelerationData(VALID_ACCEL_ARR);
-        Thread.sleep(10);
-        detector.processGyroData(VALID_GYRO_ARR_POS);
-
-        verifyZeroInteractions(intent);
-    }
-
-    @Test
-    public void validValuesExceptAccelShouldFail() throws InterruptedException {
+    public void validValuesExceptAccelShouldFailClockwise() throws InterruptedException {
         detector.processGravityData(VALID_GRAVITY_ARR);
         detector.processAccelerationData(INVALID_ACCEL_ARR);
         Thread.sleep(10);
@@ -207,8 +353,4 @@ public class ReceiveMotionDetectorTest {
 
         verifyZeroInteractions(intent);
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    //                   tests for motions executed with the left hand                            //
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 }

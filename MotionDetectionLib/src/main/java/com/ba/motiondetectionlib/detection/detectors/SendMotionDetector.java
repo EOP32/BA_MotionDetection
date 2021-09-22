@@ -39,8 +39,8 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
         long timeNow = timestamp();
         long backPositionTimeDiff = timeNow - backPosition.timestamp;
         long forthPositionTimeDiff = timeNow - forthPosition.timestamp;
-        long throwTimeDiffRight = timeNow - motionRight.timestamp;
-        long throwTimeDiffLeft = timeNow - motionLeft.timestamp;
+        long motionRightDiff = timeNow - motionRight.timestamp;
+        long motionLeftDiff = timeNow - motionLeft.timestamp;
         long maxTimeDiff = MAX_GENERAL_TIME_DIFF;
 
         if (backPosition.detected &&
@@ -48,7 +48,7 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
                 motionRight.detected &&
                 rotationCounterClockWise.detected &&
                 backPositionTimeDiff < maxTimeDiff &&
-                throwTimeDiffRight < maxTimeDiff &&
+                motionRightDiff < maxTimeDiff &&
                 forthPositionTimeDiff < backPositionTimeDiff) {
 
             onMotionDetected(MotionType.SEND);
@@ -60,7 +60,7 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
                 motionLeft.detected &&
                 rotationClockWise.detected &&
                 forthPositionTimeDiff < maxTimeDiff &&
-                throwTimeDiffLeft < maxTimeDiff &&
+                motionLeftDiff < maxTimeDiff &&
                 backPositionTimeDiff < forthPositionTimeDiff) {
 
             onMotionDetected(MotionType.SEND);
