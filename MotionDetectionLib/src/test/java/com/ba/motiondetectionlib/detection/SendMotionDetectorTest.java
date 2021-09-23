@@ -22,8 +22,8 @@ public class SendMotionDetectorTest {
     private Intent intent;
     private Context context;
 
-    private final float MOTION_RIGHT_VALID = 8f;
-    private final float MOTION_LEFT_VALID = -8f;
+    private final float MOTION_RIGHT_VALID = 16f;
+    private final float MOTION_LEFT_VALID = -16f;
     private final float ROTATE_RIGHT_VALID = -6f;
     private final float ROTATE_LEFT_VALID = 6f;
     private final float GRAVITY_BACK_VALID = -8f;
@@ -50,7 +50,7 @@ public class SendMotionDetectorTest {
     @Test
     public void validValuesRightHandSuccess() throws InterruptedException {
         // valid order for right handed send motion
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
@@ -65,7 +65,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void validBorderlineValuesRightHandSuccess() throws InterruptedException {
-        detector.processLinearAccelerationData(new float[]{7.1f, 0, 0});
+        detector.processAccelerationData(new float[]{15.1f, 0, 0});
         Thread.sleep(10);
         detector.processGyroData(new float[]{0, -5.1f, 0});
         Thread.sleep(10);
@@ -80,8 +80,8 @@ public class SendMotionDetectorTest {
 
     @Test
     public void validRightHandBorderlineTimeSuccess() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
-        Thread.sleep(200);
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
+        Thread.sleep(150);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(100);
         detector.processGravityData(GRAVITY_BACK_VALID_ARR);
@@ -96,7 +96,7 @@ public class SendMotionDetectorTest {
     @Test
     public void rightHandShouldBeDetectedTwiceSuccess() throws InterruptedException {
         // valid order for right handed send motion
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
@@ -105,8 +105,8 @@ public class SendMotionDetectorTest {
         detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
 
         Thread.sleep(500);
-        
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
+
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
@@ -121,7 +121,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void rightHandInvalidRotationShouldFail() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);
@@ -134,7 +134,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void rightHandWrongOrderGravityShouldFail() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
@@ -148,7 +148,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void rightHandInvalidAccelShouldFail() throws InterruptedException {
-        detector.processLinearAccelerationData(new float[]{6f, 0, 0});
+        detector.processAccelerationData(new float[]{6f, 0, 0});
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
@@ -161,7 +161,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void rightHandInvalidGyroShouldFail() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(new float[]{0, 0, 0});
         Thread.sleep(10);
@@ -174,7 +174,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void rightHandInvalidGravityShouldFail() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
@@ -191,7 +191,7 @@ public class SendMotionDetectorTest {
         Thread.sleep(10);
         detector.processGravityData(GRAVITY_BACK_VALID_ARR);
         Thread.sleep(10);
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
@@ -201,7 +201,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void rightHandValidValuesWrongOrderShouldFail2() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
@@ -215,7 +215,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void validValuesRightHandOneMissingFail() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_RIGHT_VALID_ARR);
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
@@ -231,7 +231,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void validValuesLeftHandSuccess() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);
@@ -248,7 +248,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void validBorderlineValuesLeftHandSuccess() throws InterruptedException {
-        detector.processLinearAccelerationData(new float[]{-7.1f, 0, 0});
+        detector.processAccelerationData(new float[]{-15.1f, 0, 0});
         Thread.sleep(10);
         detector.processGyroData(new float[]{0, 5.1f, 0});
         Thread.sleep(10);
@@ -263,8 +263,8 @@ public class SendMotionDetectorTest {
 
     @Test
     public void validLeftHandBorderlineTimeSuccess() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
-        Thread.sleep(150);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
+        Thread.sleep(100);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(150);
         detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
@@ -278,7 +278,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void leftHandInvalidRotationShouldFail() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
@@ -291,7 +291,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void leftHandWrongOrderGravityShouldFail() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);
@@ -304,7 +304,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void leftHandInvalidAccelShouldFail() throws InterruptedException {
-        detector.processLinearAccelerationData(new float[]{-6f, 0, 0});
+        detector.processAccelerationData(new float[]{-6f, 0, 0});
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);
@@ -317,7 +317,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void leftHandInvalidGyroShouldFail() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(new float[]{0, 0, 0});
         Thread.sleep(10);
@@ -330,7 +330,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void leftHandInvalidGravityShouldFail() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);
@@ -349,14 +349,14 @@ public class SendMotionDetectorTest {
         Thread.sleep(10);
         detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
         Thread.sleep(10);
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
 
         verifyZeroInteractions(intent);
     }
 
     @Test
     public void leftHandValidValuesWrongOrderShouldFail2() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);
@@ -369,7 +369,7 @@ public class SendMotionDetectorTest {
 
     @Test
     public void validValuesLeftHandOneMissingFail() throws InterruptedException {
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);
@@ -382,7 +382,7 @@ public class SendMotionDetectorTest {
     @Test
     public void leftHandShouldBeDetectedTwiceSuccess() throws InterruptedException {
         // valid order for right handed send motion
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);
@@ -392,7 +392,7 @@ public class SendMotionDetectorTest {
 
         Thread.sleep(500);
 
-        detector.processLinearAccelerationData(MOTION_LEFT_VALID_ARR);
+        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);

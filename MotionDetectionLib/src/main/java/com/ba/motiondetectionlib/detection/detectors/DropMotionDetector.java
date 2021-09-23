@@ -105,11 +105,5 @@ public class DropMotionDetector extends MotionDetector implements SensorDataList
 
     @Override
     public void processGyroData(float[] values) {
-
-    }
-
-    @Override
-    public void processLinearAccelerationData(float[] values) {
-
     }
 }

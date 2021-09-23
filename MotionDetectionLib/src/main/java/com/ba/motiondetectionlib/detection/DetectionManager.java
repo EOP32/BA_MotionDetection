@@ -37,9 +37,6 @@ public class DetectionManager implements IDetectionManager, MotionSensorSource {
                 case Sensor.TYPE_ACCELEROMETER:
                     listener.processAccelerationData(event.values);
                     break;
-                case Sensor.TYPE_LINEAR_ACCELERATION:
-                    listener.processLinearAccelerationData(event.values);
-                    break;
                 case Sensor.TYPE_GRAVITY:
                     listener.processGravityData(event.values);
                     break;

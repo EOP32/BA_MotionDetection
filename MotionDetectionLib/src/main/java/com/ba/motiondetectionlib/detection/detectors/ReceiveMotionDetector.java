@@ -81,8 +81,4 @@ public class ReceiveMotionDetector extends MotionDetector implements SensorDataL
         rotationGesture.detected = false;
         upMotionGesture.detected = false;
     }
-
-    @Override
-    public void processLinearAccelerationData(float[] values) {
-    }
 }

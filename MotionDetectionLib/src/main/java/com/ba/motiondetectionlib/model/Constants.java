@@ -5,7 +5,7 @@ package com.ba.motiondetectionlib.model;
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 public class Constants {
-    
+
     // ------> general constants for motion detection
     public static final String INTENT_IDENTIFIER = "com.ba.motiondetection.intent.action";
     public static final String STRING_EXTRA_IDENTIFIER = "com.ba.motiondetection.intent.string.extra";
@@ -23,7 +23,7 @@ public class Constants {
 
     // ------> SEND motion constants
     public static final float MIN_SEND_ROTATION_VALUE = 5f;
-    public static final float MIN_SEND_ACCELERATION_VALUE = 7f;
+    public static final float MIN_SEND_ACCELERATION_VALUE = 15f;
 
     // ------> RECEIVE constants
     public static final float MIN_ROTATION_VALUE = 7f;

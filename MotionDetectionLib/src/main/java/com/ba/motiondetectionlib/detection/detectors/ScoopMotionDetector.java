@@ -107,9 +107,4 @@ public class ScoopMotionDetector extends MotionDetector implements SensorDataLis
     public void processGyroData(float[] values) {
 
     }
-
-    @Override
-    public void processLinearAccelerationData(float[] values) {
-
-    }
 }

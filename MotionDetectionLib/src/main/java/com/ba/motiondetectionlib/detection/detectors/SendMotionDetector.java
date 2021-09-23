@@ -69,22 +69,6 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
     }
 
     @Override
-    public void processLinearAccelerationData(float[] values) {
-        float xValue = values[0];
-
-        if (xValue > MIN_SEND_ACCELERATION_VALUE) {
-            motionRight.detected = true;
-            motionRight.timestamp = timestamp();
-            detect();
-        }
-        if (xValue < -MIN_SEND_ACCELERATION_VALUE) {
-            motionLeft.detected = true;
-            motionLeft.timestamp = timestamp();
-            detect();
-        }
-    }
-
-    @Override
     public void processGravityData(float[] values) {
         float xValue = values[0];
 
@@ -117,6 +101,22 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
         }
     }
 
+    @Override
+    public void processAccelerationData(float[] values) {
+        float xValue = values[0];
+
+        if (xValue > MIN_SEND_ACCELERATION_VALUE) {
+            motionRight.detected = true;
+            motionRight.timestamp = timestamp();
+            detect();
+        }
+        if (xValue < -MIN_SEND_ACCELERATION_VALUE) {
+            motionLeft.detected = true;
+            motionLeft.timestamp = timestamp();
+            detect();
+        }
+    }
+
     private void reset() {
         backPosition.detected = false;
         forthPosition.detected = false;
@@ -124,11 +124,5 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
         motionLeft.detected = false;
         rotationClockWise.detected = false;
         rotationCounterClockWise.detected = false;
-    }
-
-
-    @Override
-    public void processAccelerationData(float[] values) {
-
     }
 }
