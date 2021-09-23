@@ -112,8 +112,8 @@ public class MotionDetectionService extends Service implements SensorEventListen
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intentActivity, 0);
 
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setContentTitle("Service running")
-                .setContentText("Started detecting motions.")
+                .setContentTitle(getString(R.string.notification_title))
+                .setContentText(getString(R.string.notification_text))
                 .setSmallIcon(R.drawable.ic_loop)
                 .setContentIntent(contentIntent)
                 .build();
