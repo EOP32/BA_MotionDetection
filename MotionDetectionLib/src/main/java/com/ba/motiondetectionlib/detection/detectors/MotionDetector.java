@@ -44,11 +44,12 @@ public class MotionDetector implements MotionDetectionListener {
         }
     }
 
-    private void sendBroadcast(String motion) {
+    @Override
+    public void sendBroadcast(String motionType) {
         intent.setAction(INTENT_IDENTIFIER);
-        intent.putExtra(STRING_EXTRA_IDENTIFIER, motion);
+        intent.putExtra(STRING_EXTRA_IDENTIFIER, motionType);
         context.sendBroadcast(intent);
-        Log.d(TAG, "Motion detection broadcast sent. " + motion);
+        Log.d(TAG, "Motion detection broadcast sent. " + motionType);
     }
 
     long timestamp() {

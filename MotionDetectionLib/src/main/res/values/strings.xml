@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="example_app_title">Service running</string>
     <string name="notification_title">Service running</string>
     <string name="notification_text">Started detecting motions.</string>
+    <string name="notification_channel_id">Motion_Detection_channel_id</string>
 </resources>

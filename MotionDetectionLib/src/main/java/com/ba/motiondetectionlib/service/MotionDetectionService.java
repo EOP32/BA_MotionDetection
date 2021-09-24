@@ -24,10 +24,7 @@ import com.ba.motiondetectionlib.detection.DetectionManager;
 
 public class MotionDetectionService extends Service implements SensorEventListener {
 
-    private final String CHANNEL_ID = "Motion_Detection_Service";
-
     private SensorManager sensorManager;
-    private Sensor linearAccelerationSensor;
     private Sensor accelerationSensor;
     private Sensor gravitySensor;
     private Sensor gyroscopeSensor;
@@ -62,13 +59,11 @@ public class MotionDetectionService extends Service implements SensorEventListen
     private void initializeAndRegisterSensors() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-        linearAccelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         accelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 
-        if (linearAccelerationSensor != null && gravitySensor != null && gyroscopeSensor != null && accelerationSensor != null) {
-            sensorManager.registerListener(this, linearAccelerationSensor, SensorManager.SENSOR_DELAY_UI);
+        if (gravitySensor != null && gyroscopeSensor != null && accelerationSensor != null) {
             sensorManager.registerListener(this, accelerationSensor, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, gravitySensor, SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(this, gyroscopeSensor, SensorManager.SENSOR_DELAY_UI);
@@ -79,7 +74,6 @@ public class MotionDetectionService extends Service implements SensorEventListen
     }
 
     private void unregisterSensors() {
-        sensorManager.unregisterListener(this, linearAccelerationSensor);
         sensorManager.unregisterListener(this, accelerationSensor);
         sensorManager.unregisterListener(this, gravitySensor);
         sensorManager.unregisterListener(this, gyroscopeSensor);
@@ -98,8 +92,8 @@ public class MotionDetectionService extends Service implements SensorEventListen
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Motion Detection",
+                    getString(R.string.notification_channel_id),
+                    getString(R.string.example_app_title),
                     NotificationManager.IMPORTANCE_DEFAULT
             );
             getSystemService(NotificationManager.class).createNotificationChannel(serviceChannel);
@@ -111,7 +105,7 @@ public class MotionDetectionService extends Service implements SensorEventListen
         Intent intentActivity = this.getPackageManager().getLaunchIntentForPackage(packageName);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intentActivity, 0);
 
-        return new NotificationCompat.Builder(this, CHANNEL_ID)
+        return new NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
                 .setContentTitle(getString(R.string.notification_title))
                 .setContentText(getString(R.string.notification_text))
                 .setSmallIcon(R.drawable.ic_loop)
