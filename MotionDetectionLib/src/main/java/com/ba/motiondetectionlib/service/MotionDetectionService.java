@@ -81,7 +81,8 @@ public class MotionDetectionService extends Service implements SensorEventListen
     }
 
     private void initializeDetectors() {
-        detectionManager = new DetectionManager(this);
+        detectionManager = DetectionManager.getInstance();
+        detectionManager.startDetectors(this);
     }
 
     @Override

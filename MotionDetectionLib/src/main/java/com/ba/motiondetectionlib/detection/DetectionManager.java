@@ -16,18 +16,25 @@ import java.util.List;
 public class DetectionManager implements IDetectionManager, MotionSensorSource {
 
     private List<SensorDataListener> sensorDataListenerList;
+    private static DetectionManager instance = null;
 
-    public DetectionManager(Context context) {
-        sensorDataListenerList = new ArrayList<>();
-        startDetectors(context, this);
+    private DetectionManager() {
+    }
+
+    public static DetectionManager getInstance() {
+        if (instance == null) {
+            return new DetectionManager();
+        }
+        return instance;
     }
 
     @Override
-    public void startDetectors(Context context, MotionSensorSource sensorSource) {
-        new SendMotionDetector(context, new Intent(), sensorSource);
-        new ReceiveMotionDetector(context, new Intent(), sensorSource);
-        new DropMotionDetector(context, new Intent(), sensorSource);
-        new ScoopMotionDetector(context, new Intent(), sensorSource);
+    public void startDetectors(Context context) {
+        sensorDataListenerList = new ArrayList<>();
+        new SendMotionDetector(context, new Intent(), this);
+        new ReceiveMotionDetector(context, new Intent(), this);
+        new DropMotionDetector(context, new Intent(), this);
+        new ScoopMotionDetector(context, new Intent(), this);
     }
 
     @Override

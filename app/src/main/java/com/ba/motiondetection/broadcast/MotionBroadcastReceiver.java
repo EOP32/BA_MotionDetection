@@ -1,5 +1,11 @@
 package com.ba.motiondetection.broadcast;
 
+import static com.ba.motiondetectionlib.model.Constants.DROP_MOTION;
+import static com.ba.motiondetectionlib.model.Constants.RECEIVE_MOTION;
+import static com.ba.motiondetectionlib.model.Constants.SCOOP_MOTION;
+import static com.ba.motiondetectionlib.model.Constants.SEND_MOTION;
+import static com.ba.motiondetectionlib.model.Constants.STRING_EXTRA_IDENTIFIER;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,12 +13,6 @@ import android.util.Log;
 
 import com.ba.motiondetectionlib.model.Constants;
 import com.ba.motiondetectionlib.model.MotionType;
-
-import static com.ba.motiondetectionlib.model.Constants.DROP_MOTION;
-import static com.ba.motiondetectionlib.model.Constants.RECEIVE_MOTION;
-import static com.ba.motiondetectionlib.model.Constants.SCOOP_MOTION;
-import static com.ba.motiondetectionlib.model.Constants.SEND_MOTION;
-import static com.ba.motiondetectionlib.model.Constants.STRING_EXTRA_IDENTIFIER;
 
 public class MotionBroadcastReceiver extends BroadcastReceiver {
 

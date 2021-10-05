@@ -1,11 +1,5 @@
 package com.ba.motiondetectionlib.detection.detectors;
 
-import com.ba.motiondetectionlib.detection.MotionSensorSource;
-import com.ba.motiondetectionlib.detection.SensorDataListener;
-import com.ba.motiondetectionlib.detection.detectors.MotionDetector;
-import com.ba.motiondetectionlib.model.MotionDetectionState;
-import com.ba.motiondetectionlib.model.MotionType;
-
 import static com.ba.motiondetectionlib.model.Constants.MAX_TIME_DIFF_RECEIVE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_ACCELERATION_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
@@ -13,6 +7,11 @@ import static com.ba.motiondetectionlib.model.Constants.MIN_ROTATION_VALUE;
 
 import android.content.Context;
 import android.content.Intent;
+
+import com.ba.motiondetectionlib.detection.MotionSensorSource;
+import com.ba.motiondetectionlib.detection.SensorDataListener;
+import com.ba.motiondetectionlib.model.MotionDetectionState;
+import com.ba.motiondetectionlib.model.MotionType;
 
 public class ReceiveMotionDetector extends MotionDetector implements SensorDataListener {
 
