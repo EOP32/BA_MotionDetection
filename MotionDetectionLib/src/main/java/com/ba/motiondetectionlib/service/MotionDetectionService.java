@@ -59,7 +59,7 @@ public class MotionDetectionService extends Service implements SensorEventListen
     private void initializeAndRegisterSensors() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-        accelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        accelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         gravitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
         gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 

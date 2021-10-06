@@ -41,7 +41,7 @@ public class DetectionManager implements IDetectionManager, MotionSensorSource {
     public void forwardSensorData(SensorEvent event) {
         for (SensorDataListener listener : sensorDataListenerList) {
             switch (event.sensor.getType()) {
-                case Sensor.TYPE_ACCELEROMETER:
+                case Sensor.TYPE_LINEAR_ACCELERATION:
                     listener.processAccelerationData(event.values);
                     break;
                 case Sensor.TYPE_GRAVITY:
