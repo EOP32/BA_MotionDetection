@@ -1,9 +1,9 @@
 package com.ba.motiondetectionlib.detection.detectors;
 
 import static com.ba.motiondetectionlib.model.Constants.MAX_TIME_DIFF_RECEIVE;
-import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_ACCELERATION_VALUE;
-import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_GRAVITY_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_ROTATION_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_VERTICAL_ACCELERATION_VALUE;
 
 import android.content.Context;
 import android.content.Intent;
@@ -50,7 +50,7 @@ public class ReceiveMotionDetector extends MotionDetector implements SensorDataL
     public void processAccelerationData(float[] values) {
         float yValue = values[1];
 
-        if (yValue > MIN_GENERAL_ACCELERATION_VALUE) {
+        if (yValue > MIN_VERTICAL_ACCELERATION_VALUE) {
             upMotionGesture.detected = true;
             upMotionGesture.timestamp = timestamp();
             detect();
@@ -60,7 +60,7 @@ public class ReceiveMotionDetector extends MotionDetector implements SensorDataL
     @Override
     public void processGravityData(float[] values) {
         float yValue = values[1];
-        portraitMode = yValue > MIN_GENERAL_GRAVITY_VALUE;
+        portraitMode = yValue > MIN_GRAVITY_VALUE;
     }
 
     @Override

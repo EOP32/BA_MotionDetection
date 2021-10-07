@@ -2,8 +2,8 @@ package com.ba.motiondetectionlib.detection.detectors;
 
 import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
 import static com.ba.motiondetectionlib.model.Constants.MAX_GRAVITY;
-import static com.ba.motiondetectionlib.model.Constants.MIN_DROP_ACCELERATION_VALUE;
-import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_GRAVITY_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_VERTICAL_ACCELERATION_VALUE;
 
 import android.content.Context;
 import android.content.Intent;
@@ -60,12 +60,12 @@ public class DropMotionDetector extends MotionDetector implements SensorDataList
     public void processAccelerationData(float[] values) {
         float zValue = values[2];
 
-        if (zValue < MIN_DROP_ACCELERATION_VALUE && gravityCache < -MIN_GENERAL_GRAVITY_VALUE) {
+        if (zValue < MIN_VERTICAL_ACCELERATION_VALUE && gravityCache < -MIN_GRAVITY_VALUE) {
             dropMotion.detected = true;
             dropMotion.timestamp = timestamp();
             detect();
         }
-        if (zValue > -MIN_DROP_ACCELERATION_VALUE) {
+        if (zValue > MIN_VERTICAL_ACCELERATION_VALUE) {
             liftMotion.detected = true;
             liftMotion.timestamp = timestamp();
             detect();
@@ -76,13 +76,13 @@ public class DropMotionDetector extends MotionDetector implements SensorDataList
     public void processGravityData(float[] values) {
         float zValue = values[2];
 
-        if (zValue < -MIN_GENERAL_GRAVITY_VALUE && significantGravityChange()) {
+        if (zValue < -MIN_GRAVITY_VALUE && significantGravityChange()) {
             cameraUpPosition.detected = true;
             cameraUpPosition.timestamp = timestamp();
             detect();
             before = zValue;
         }
-        if (zValue > MIN_GENERAL_GRAVITY_VALUE) {
+        if (zValue > MIN_GRAVITY_VALUE) {
             cameraDownPosition.detected = true;
             cameraDownPosition.timestamp = timestamp();
             detect();
@@ -92,7 +92,7 @@ public class DropMotionDetector extends MotionDetector implements SensorDataList
     }
 
     private boolean significantGravityChange() {
-        return !(before > -MAX_GRAVITY) || !(before < -MIN_GENERAL_GRAVITY_VALUE);
+        return !(before > -MAX_GRAVITY) || !(before < -MIN_GRAVITY_VALUE);
     }
 
     private void reset() {

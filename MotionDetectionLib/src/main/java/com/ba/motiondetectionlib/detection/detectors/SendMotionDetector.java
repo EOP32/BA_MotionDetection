@@ -1,9 +1,9 @@
 package com.ba.motiondetectionlib.detection.detectors;
 
 import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
-import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
-import static com.ba.motiondetectionlib.model.Constants.MIN_SEND_ACCELERATION_VALUE;
-import static com.ba.motiondetectionlib.model.Constants.MIN_SEND_ROTATION_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_GRAVITY_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_HORIZONTAL_ACCELERATION_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_ROTATION_VALUE;
 
 import android.content.Context;
 import android.content.Intent;
@@ -72,12 +72,12 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
     public void processGravityData(float[] values) {
         float xValue = values[0];
 
-        if (xValue < -MIN_GENERAL_GRAVITY_VALUE) {
+        if (xValue < -MIN_GRAVITY_VALUE) {
             backPosition.detected = true;
             backPosition.timestamp = timestamp();
             detect();
         }
-        if (xValue > MIN_GENERAL_GRAVITY_VALUE) {
+        if (xValue > MIN_GRAVITY_VALUE) {
             forthPosition.detected = true;
             forthPosition.timestamp = timestamp();
             detect();
@@ -88,13 +88,13 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
     public void processGyroData(float[] values) {
         float yValue = values[1];
 
-        if (yValue > MIN_SEND_ROTATION_VALUE) {
+        if (yValue > MIN_ROTATION_VALUE) {
             rotationClockWise.detected = true;
             rotationClockWise.timestamp = timestamp();
             detect();
         }
 
-        if (yValue < -MIN_SEND_ROTATION_VALUE) {
+        if (yValue < -MIN_ROTATION_VALUE) {
             rotationCounterClockWise.detected = true;
             rotationCounterClockWise.timestamp = timestamp();
             detect();
@@ -105,12 +105,12 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
     public void processAccelerationData(float[] values) {
         float xValue = values[0];
 
-        if (xValue > MIN_SEND_ACCELERATION_VALUE) {
+        if (xValue > MIN_HORIZONTAL_ACCELERATION_VALUE) {
             motionRight.detected = true;
             motionRight.timestamp = timestamp();
             detect();
         }
-        if (xValue < -MIN_SEND_ACCELERATION_VALUE) {
+        if (xValue < -MIN_HORIZONTAL_ACCELERATION_VALUE) {
             motionLeft.detected = true;
             motionLeft.timestamp = timestamp();
             detect();

@@ -2,9 +2,8 @@ package com.ba.motiondetectionlib.detection.detectors;
 
 import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
 import static com.ba.motiondetectionlib.model.Constants.MAX_GRAVITY;
-import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_ACCELERATION_VALUE;
-import static com.ba.motiondetectionlib.model.Constants.MIN_GENERAL_GRAVITY_VALUE;
-import static com.ba.motiondetectionlib.model.Constants.MIN_SCOOP_ACCELERATION_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_GRAVITY_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_VERTICAL_ACCELERATION_VALUE;
 
 import android.content.Context;
 import android.content.Intent;
@@ -58,12 +57,12 @@ public class ScoopMotionDetector extends MotionDetector implements SensorDataLis
     public void processAccelerationData(float[] values) {
         float zValue = values[2];
 
-        if (zValue > MIN_SCOOP_ACCELERATION_VALUE) {
+        if (zValue > MIN_VERTICAL_ACCELERATION_VALUE) {
             liftMotion.detected = true;
             liftMotion.timestamp = timestamp();
             detect();
         }
-        if (zValue < -MIN_GENERAL_ACCELERATION_VALUE) {
+        if (zValue < -MIN_VERTICAL_ACCELERATION_VALUE) {
             dropMotion.detected = true;
             dropMotion.timestamp = timestamp();
             detect();
@@ -74,13 +73,13 @@ public class ScoopMotionDetector extends MotionDetector implements SensorDataLis
     public void processGravityData(float[] values) {
         float zValue = values[2];
 
-        if (zValue < -MIN_GENERAL_GRAVITY_VALUE && significantGravityChange(zValue)) {
+        if (zValue < -MIN_GRAVITY_VALUE && significantGravityChange(zValue)) {
             cameraUpPosition.detected = true;
             cameraUpPosition.timestamp = timestamp();
             detect();
             before = zValue;
         }
-        if (zValue > MIN_GENERAL_GRAVITY_VALUE && significantGravityChange(zValue)) {
+        if (zValue > MIN_GRAVITY_VALUE && significantGravityChange(zValue)) {
             cameraDownPosition.detected = true;
             cameraDownPosition.timestamp = timestamp();
             detect();
@@ -90,9 +89,9 @@ public class ScoopMotionDetector extends MotionDetector implements SensorDataLis
 
     private boolean significantGravityChange(float value) {
         if (value < 0) {
-            return !(before > -MAX_GRAVITY) || !(before < -MIN_GENERAL_GRAVITY_VALUE);
+            return !(before > -MAX_GRAVITY) || !(before < -MIN_GRAVITY_VALUE);
         } else {
-            return !(before < MAX_GRAVITY) || !(before > MIN_GENERAL_GRAVITY_VALUE);
+            return !(before < MAX_GRAVITY) || !(before > MIN_GRAVITY_VALUE);
         }
     }
 
