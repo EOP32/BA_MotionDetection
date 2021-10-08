@@ -9,11 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.ba.motiondetectionlib.detection.MotionSensorSource;
-import com.ba.motiondetectionlib.detection.SensorDataListener;
 import com.ba.motiondetectionlib.model.MotionDetectionState;
 import com.ba.motiondetectionlib.model.MotionType;
 
-public class DropMotionDetector extends MotionDetector implements SensorDataListener {
+public class DropMotionDetector extends MotionDetector {
 
     private final MotionDetectionState dropMotion;
     private final MotionDetectionState liftMotion;
@@ -23,8 +22,7 @@ public class DropMotionDetector extends MotionDetector implements SensorDataList
     private float gravityCache;
 
     public DropMotionDetector(Context ctx, Intent intent, MotionSensorSource motionSensorSource) {
-        super(ctx, intent);
-        motionSensorSource.addSensorDataListener(this);
+        super(ctx, intent, motionSensorSource);
         cameraDownPosition = new MotionDetectionState(false, 0);
         cameraUpPosition = new MotionDetectionState(false, 0);
         dropMotion = new MotionDetectionState(false, 0);
@@ -51,7 +49,7 @@ public class DropMotionDetector extends MotionDetector implements SensorDataList
                 cameraUpTimeDiff < liftTimeDiff &&
                 dropTimeDiff < cameraUpTimeDiff) {
 
-            onMotionDetected(MotionType.DROP);
+            sendBroadcast(MotionType.DROP);
             reset();
         }
     }

@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import android.content.Context;
 import android.content.Intent;
 
-import com.ba.motiondetectionlib.detection.detectors.ScoopMotionDetector;
+import com.ba.motiondetectionlib.detection.detectors.ScoopDetector;
 import com.ba.motiondetectionlib.model.Constants;
 
 import org.junit.Before;
@@ -17,8 +17,8 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ScoopMotionDetectorTest {
-    private ScoopMotionDetector detector;
+public class ScoopMotionMotionDetectorTest {
+    private ScoopDetector detector;
     private Intent intent;
     private Context context;
 
@@ -34,7 +34,7 @@ public class ScoopMotionDetectorTest {
     public void setup() {
         intent = mock(Intent.class);
         context = mock(Context.class);
-        detector = new ScoopMotionDetector(context, intent, mock(MotionSensorSource.class));
+        detector = new ScoopDetector(context, intent, mock(MotionSensorSource.class));
     }
 
     @Test

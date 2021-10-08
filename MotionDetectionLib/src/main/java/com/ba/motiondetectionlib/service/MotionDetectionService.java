@@ -50,7 +50,6 @@ public class MotionDetectionService extends Service implements SensorEventListen
     public void onDestroy() {
         unregisterSensors();
         detectionManager.removeSensorDataListeners();
-        stopSelf();
         stopForeground(true);
 
         Log.d(TAG, "Service stopped.");

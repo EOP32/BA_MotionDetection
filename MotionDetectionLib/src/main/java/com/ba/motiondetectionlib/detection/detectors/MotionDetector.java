@@ -12,42 +12,42 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.ba.motiondetectionlib.detection.MotionDetectionListener;
+import com.ba.motiondetectionlib.detection.DetectionBroadcaster;
+import com.ba.motiondetectionlib.detection.MotionSensorSource;
+import com.ba.motiondetectionlib.detection.SensorDataListener;
 import com.ba.motiondetectionlib.model.MotionType;
 
-public class MotionDetector implements MotionDetectionListener {
+public abstract class MotionDetector implements DetectionBroadcaster, SensorDataListener {
     private final Context context;
-    private Intent intent;
+    private final Intent intent;
 
-    public MotionDetector(Context context, Intent intent) {
+    public MotionDetector(Context context, Intent intent, MotionSensorSource source) {
         this.context = context;
         this.intent = intent;
+        source.addSensorDataListener(this);
     }
 
     @Override
-    public void onMotionDetected(MotionType type) {
-        switch (type) {
+    public void sendBroadcast(MotionType motionType) {
+        intent.setAction(INTENT_IDENTIFIER);
+
+        switch (motionType) {
             case SEND:
-                sendBroadcast(SEND_MOTION);
+                intent.putExtra(STRING_EXTRA_IDENTIFIER, SEND_MOTION);
                 break;
             case RECEIVE:
-                sendBroadcast(RECEIVE_MOTION);
+                intent.putExtra(STRING_EXTRA_IDENTIFIER, RECEIVE_MOTION);
                 break;
             case DROP:
-                sendBroadcast(DROP_MOTION);
+                intent.putExtra(STRING_EXTRA_IDENTIFIER, DROP_MOTION);
                 break;
             case SCOOP:
-                sendBroadcast(SCOOP_MOTION);
+                intent.putExtra(STRING_EXTRA_IDENTIFIER, SCOOP_MOTION);
                 break;
             default:
-                break;
+                return;
         }
-    }
 
-    @Override
-    public void sendBroadcast(String motionType) {
-        intent.setAction(INTENT_IDENTIFIER);
-        intent.putExtra(STRING_EXTRA_IDENTIFIER, motionType);
         context.sendBroadcast(intent);
         Log.d(TAG, "Motion detection broadcast sent. " + motionType);
     }

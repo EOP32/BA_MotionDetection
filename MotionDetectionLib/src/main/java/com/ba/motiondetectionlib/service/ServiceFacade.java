@@ -3,10 +3,10 @@ package com.ba.motiondetectionlib.service;
 import android.content.Context;
 import android.content.Intent;
 
-public class ServiceController implements IServiceController {
+public class ServiceFacade implements IServiceFacade {
     private Context context;
 
-    public ServiceController(Context context) {
+    public ServiceFacade(Context context) {
         this.context = context;
     }
 

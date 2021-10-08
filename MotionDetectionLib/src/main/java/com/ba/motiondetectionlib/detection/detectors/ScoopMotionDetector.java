@@ -9,11 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.ba.motiondetectionlib.detection.MotionSensorSource;
-import com.ba.motiondetectionlib.detection.SensorDataListener;
 import com.ba.motiondetectionlib.model.MotionDetectionState;
 import com.ba.motiondetectionlib.model.MotionType;
 
-public class ScoopMotionDetector extends MotionDetector implements SensorDataListener {
+public class ScoopMotionDetector extends MotionDetector {
 
     private MotionDetectionState liftMotion;
     private MotionDetectionState dropMotion;
@@ -22,8 +21,7 @@ public class ScoopMotionDetector extends MotionDetector implements SensorDataLis
     private float before;
 
     public ScoopMotionDetector(Context context, Intent intent, MotionSensorSource motionSensorSource) {
-        super(context, intent);
-        motionSensorSource.addSensorDataListener(this);
+        super(context, intent, motionSensorSource);
         cameraDownPosition = new MotionDetectionState(false, 0);
         cameraUpPosition = new MotionDetectionState(false, 0);
         liftMotion = new MotionDetectionState(false, 0);
@@ -48,7 +46,7 @@ public class ScoopMotionDetector extends MotionDetector implements SensorDataLis
                 cameraDownTimeDiff < dropTimeDiff &&
                 liftTimeDiff < dropTimeDiff) {
 
-            onMotionDetected(MotionType.SCOOP);
+            sendBroadcast(MotionType.SCOOP);
             reset();
         }
     }

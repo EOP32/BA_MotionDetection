@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ReceiveMotionDetectorTest {
+public class ReceiveMotionMotionDetectorTest {
     private ReceiveMotionDetector detector;
     private Intent intent;
     private Context context;

@@ -9,11 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.ba.motiondetectionlib.detection.MotionSensorSource;
-import com.ba.motiondetectionlib.detection.SensorDataListener;
 import com.ba.motiondetectionlib.model.MotionDetectionState;
 import com.ba.motiondetectionlib.model.MotionType;
 
-public class ReceiveMotionDetector extends MotionDetector implements SensorDataListener {
+public class ReceiveMotionDetector extends MotionDetector {
 
     private final MotionDetectionState rotationGesture;
     private final MotionDetectionState upMotionGesture;
@@ -21,8 +20,7 @@ public class ReceiveMotionDetector extends MotionDetector implements SensorDataL
     private float before;
 
     public ReceiveMotionDetector(Context context, Intent intent, MotionSensorSource motionSensorSource) {
-        super(context, intent);
-        motionSensorSource.addSensorDataListener(this);
+        super(context, intent, motionSensorSource);
         rotationGesture = new MotionDetectionState(false, 0);
         upMotionGesture = new MotionDetectionState(false, 0);
         before = 0;
@@ -41,7 +39,7 @@ public class ReceiveMotionDetector extends MotionDetector implements SensorDataL
                 diffR < maxTimeDiff &&
                 diffU < maxTimeDiff) {
 
-            onMotionDetected(MotionType.RECEIVE);
+            sendBroadcast(MotionType.RECEIVE);
             reset();
         }
     }

@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DropMotionDetectorTest {
+public class DropMotionMotionDetectorTest {
     private DropMotionDetector detector;
     private Intent intent;
     private Context context;

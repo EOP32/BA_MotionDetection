@@ -11,18 +11,18 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.ba.motiondetection.R;
 import com.ba.motiondetection.broadcast.BroadcastListener;
 import com.ba.motiondetection.broadcast.MotionBroadcastReceiver;
 import com.ba.motiondetectionlib.model.Constants;
 import com.ba.motiondetectionlib.model.MotionType;
-import com.ba.motiondetectionlib.service.ServiceController;
+import com.ba.motiondetectionlib.service.IServiceFacade;
+import com.ba.motiondetectionlib.service.ServiceFacade;
 
 public class MainActivity extends AppCompatActivity implements BroadcastListener {
 
-    private ServiceController serviceController;
+    private IServiceFacade serviceFacade;
     private MotionBroadcastReceiver motionBroadcastReceiver;
 
     private CardView sendView;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements BroadcastListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        serviceController = new ServiceController(this);
+        serviceFacade = new ServiceFacade(this);
         motionBroadcastReceiver = new MotionBroadcastReceiver(this);
 
         sendView = findViewById(R.id.sendView);
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements BroadcastListener
     @Override
     protected void onStart() {
         super.onStart();
-        serviceController.startDetectionService();
+        serviceFacade.startDetectionService();
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(Constants.INTENT_IDENTIFIER);
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements BroadcastListener
     protected void onStop() {
         super.onStop();
         unregisterReceiver(motionBroadcastReceiver);
-        serviceController.stopDetectionService();
+        //serviceFacade.stopDetectionService();
     }
 
     private void reset() {

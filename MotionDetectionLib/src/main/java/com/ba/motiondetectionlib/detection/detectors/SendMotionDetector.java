@@ -7,14 +7,12 @@ import static com.ba.motiondetectionlib.model.Constants.MIN_ROTATION_VALUE;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.ba.motiondetectionlib.detection.MotionSensorSource;
-import com.ba.motiondetectionlib.detection.SensorDataListener;
 import com.ba.motiondetectionlib.model.MotionDetectionState;
 import com.ba.motiondetectionlib.model.MotionType;
 
-public class SendMotionDetector extends MotionDetector implements SensorDataListener {
+public class SendMotionDetector extends MotionDetector {
 
     private final MotionDetectionState motionRight;
     private final MotionDetectionState motionLeft;
@@ -24,8 +22,7 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
     private final MotionDetectionState forthPosition;
 
     public SendMotionDetector(Context context, Intent intent, MotionSensorSource motionSensorSource) {
-        super(context, intent);
-        motionSensorSource.addSensorDataListener(this);
+        super(context, intent, motionSensorSource);
         backPosition = new MotionDetectionState(false, 0);
         forthPosition = new MotionDetectionState(false, 0);
         motionRight = new MotionDetectionState(false, 0);
@@ -51,7 +48,7 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
                 motionRightDiff < maxTimeDiff &&
                 forthPositionTimeDiff < backPositionTimeDiff) {
 
-            onMotionDetected(MotionType.SEND);
+            sendBroadcast(MotionType.SEND);
             reset();
         }
 
@@ -63,7 +60,7 @@ public class SendMotionDetector extends MotionDetector implements SensorDataList
                 motionLeftDiff < maxTimeDiff &&
                 backPositionTimeDiff < forthPositionTimeDiff) {
 
-            onMotionDetected(MotionType.SEND);
+            sendBroadcast(MotionType.SEND);
             reset();
         }
     }

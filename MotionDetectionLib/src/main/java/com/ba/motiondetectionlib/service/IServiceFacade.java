@@ -1,6 +1,6 @@
 package com.ba.motiondetectionlib.service;
 
-public interface IServiceController {
+public interface IServiceFacade {
     void startDetectionService();
     void stopDetectionService();
 }
