@@ -8,7 +8,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import android.content.Context;
 import android.content.Intent;
 
-import com.ba.motiondetectionlib.detection.detectors.SendDetector;
+import com.ba.motiondetectionlib.detection.detectors.SendMotionDetector;
 import com.ba.motiondetectionlib.model.Constants;
 
 import org.junit.Before;
@@ -18,7 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SendMotionMotionDetectorTest {
-    private SendDetector detector;
+    private SendMotionDetector detector;
     private Intent intent;
     private Context context;
 
@@ -40,7 +40,7 @@ public class SendMotionMotionDetectorTest {
     public void setup() {
         intent = mock(Intent.class);
         context = mock(Context.class);
-        detector = new SendDetector(context, intent, mock(MotionSensorSource.class));
+        detector = new SendMotionDetector(context, intent, mock(MotionSensorSource.class));
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////

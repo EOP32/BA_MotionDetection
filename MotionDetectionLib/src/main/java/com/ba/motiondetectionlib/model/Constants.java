@@ -7,8 +7,8 @@ package com.ba.motiondetectionlib.model;
 public class Constants {
 
     // ------> general constants for motion detection
-    public static final String INTENT_IDENTIFIER = "com.ba.motiondetection.intent.action";
-    public static final String STRING_EXTRA_IDENTIFIER = "com.ba.motiondetection.intent.string.extra";
+    public static final String INTENT_IDENTIFIER = "com.ba.motiondetectionlib";
+    public static final String STRING_EXTRA_IDENTIFIER = "com.ba.motiondetectionlib.intent.string.extra";
 
     public static final String SEND_MOTION = "Motion_Detection_Send";
     public static final String RECEIVE_MOTION = "Motion_Detection_Receive";

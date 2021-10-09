@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements BroadcastListener
     protected void onStop() {
         super.onStop();
         unregisterReceiver(motionBroadcastReceiver);
-        //serviceFacade.stopDetectionService();
+        serviceFacade.stopDetectionService();
     }
 
     private void reset() {

@@ -1,13 +1,10 @@
 package com.ba.motiondetectionlib.detection.detectors;
 
 import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
-import static com.ba.motiondetectionlib.model.Constants.MAX_GRAVITY;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GRAVITY_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_VERTICAL_ACCELERATION_VALUE;
-
 import android.content.Context;
 import android.content.Intent;
-
 import com.ba.motiondetectionlib.detection.MotionSensorSource;
 import com.ba.motiondetectionlib.model.MotionDetectionState;
 import com.ba.motiondetectionlib.model.MotionType;
@@ -18,7 +15,7 @@ public class ScoopMotionDetector extends MotionDetector {
     private MotionDetectionState dropMotion;
     private MotionDetectionState cameraDownPosition;
     private MotionDetectionState cameraUpPosition;
-    private float before;
+    private boolean gravityValuePositive;
 
     public ScoopMotionDetector(Context context, Intent intent, MotionSensorSource motionSensorSource) {
         super(context, intent, motionSensorSource);
@@ -26,7 +23,7 @@ public class ScoopMotionDetector extends MotionDetector {
         cameraUpPosition = new MotionDetectionState(false, 0);
         liftMotion = new MotionDetectionState(false, 0);
         dropMotion = new MotionDetectionState(false, 0);
-        before = 0;
+        gravityValuePositive = false;
     }
 
     @Override
@@ -42,8 +39,8 @@ public class ScoopMotionDetector extends MotionDetector {
                 liftMotion.detected &&
                 dropMotion.detected &&
                 cameraUpTimeDiff < MAX_GENERAL_TIME_DIFF &&
-                dropTimeDiff < cameraUpTimeDiff &&
-                cameraDownTimeDiff < dropTimeDiff &&
+                dropTimeDiff < MAX_GENERAL_TIME_DIFF &&
+                cameraDownTimeDiff < cameraUpTimeDiff &&
                 liftTimeDiff < dropTimeDiff) {
 
             sendBroadcast(MotionType.SCOOP);
@@ -56,13 +53,13 @@ public class ScoopMotionDetector extends MotionDetector {
         float zValue = values[2];
 
         if (zValue > MIN_VERTICAL_ACCELERATION_VALUE) {
-            liftMotion.detected = true;
-            liftMotion.timestamp = timestamp();
-            detect();
-        }
-        if (zValue < -MIN_VERTICAL_ACCELERATION_VALUE) {
-            dropMotion.detected = true;
-            dropMotion.timestamp = timestamp();
+            if (gravityValuePositive) {
+                liftMotion.detected = true;
+                liftMotion.timestamp = timestamp();
+            } else {
+                dropMotion.detected = true;
+                dropMotion.timestamp = timestamp();
+            }
             detect();
         }
     }
@@ -70,26 +67,17 @@ public class ScoopMotionDetector extends MotionDetector {
     @Override
     public void processGravityData(float[] values) {
         float zValue = values[2];
+        gravityValuePositive = zValue >= 0;
 
-        if (zValue < -MIN_GRAVITY_VALUE && significantGravityChange(zValue)) {
+        if (zValue < -MIN_GRAVITY_VALUE) {
             cameraUpPosition.detected = true;
             cameraUpPosition.timestamp = timestamp();
             detect();
-            before = zValue;
         }
-        if (zValue > MIN_GRAVITY_VALUE && significantGravityChange(zValue)) {
+        if (zValue > MIN_GRAVITY_VALUE) {
             cameraDownPosition.detected = true;
             cameraDownPosition.timestamp = timestamp();
             detect();
-            before = zValue;
-        }
-    }
-
-    private boolean significantGravityChange(float value) {
-        if (value < 0) {
-            return !(before > -MAX_GRAVITY) || !(before < -MIN_GRAVITY_VALUE);
-        } else {
-            return !(before < MAX_GRAVITY) || !(before > MIN_GRAVITY_VALUE);
         }
     }
 
@@ -102,6 +90,5 @@ public class ScoopMotionDetector extends MotionDetector {
 
     @Override
     public void processGyroData(float[] values) {
-
     }
 }
