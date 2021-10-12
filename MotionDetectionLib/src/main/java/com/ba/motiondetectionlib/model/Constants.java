@@ -23,6 +23,7 @@ public class Constants {
     public static final float MIN_VERTICAL_ACCELERATION_VALUE = 6f;
 
     public static final float MIN_ROTATION_VALUE = 7f;
+    public static final float MIN_SEND_ROTATION_VALUE = 3.5f;
 
     public static final long MAX_GENERAL_TIME_DIFF = 500;
 

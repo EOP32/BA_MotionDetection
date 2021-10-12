@@ -4,6 +4,7 @@ import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GRAVITY_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_HORIZONTAL_ACCELERATION_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_ROTATION_VALUE;
+import static com.ba.motiondetectionlib.model.Constants.MIN_SEND_ROTATION_VALUE;
 
 import android.content.Context;
 import android.content.Intent;
@@ -85,13 +86,13 @@ public class SendMotionDetector extends MotionDetector {
     public void processGyroData(float[] values) {
         float yValue = values[1];
 
-        if (yValue > MIN_ROTATION_VALUE) {
+        if (yValue > MIN_SEND_ROTATION_VALUE) {
             rotationClockWise.detected = true;
             rotationClockWise.timestamp = timestamp();
             detect();
         }
 
-        if (yValue < -MIN_ROTATION_VALUE) {
+        if (yValue < -MIN_SEND_ROTATION_VALUE) {
             rotationCounterClockWise.detected = true;
             rotationCounterClockWise.timestamp = timestamp();
             detect();

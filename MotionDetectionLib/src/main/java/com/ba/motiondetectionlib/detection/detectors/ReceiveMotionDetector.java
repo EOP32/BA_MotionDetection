@@ -14,27 +14,28 @@ import com.ba.motiondetectionlib.model.MotionType;
 
 public class ReceiveMotionDetector extends MotionDetector {
 
-    private final MotionDetectionState rotationGesture;
-    private final MotionDetectionState upMotionGesture;
+    private final MotionDetectionState rotationMotion;
+    private final MotionDetectionState upMotion;
     private boolean portraitMode;
     private float before;
 
     public ReceiveMotionDetector(Context context, Intent intent, MotionSensorSource motionSensorSource) {
         super(context, intent, motionSensorSource);
-        rotationGesture = new MotionDetectionState(false, 0);
-        upMotionGesture = new MotionDetectionState(false, 0);
+        rotationMotion = new MotionDetectionState(false, 0);
+        upMotion = new MotionDetectionState(false, 0);
+        portraitMode = false;
         before = 0;
     }
 
     @Override
     public void detect() {
         long timeNow = timestamp();
-        long diffR = timeNow - rotationGesture.timestamp;
-        long diffU = timeNow - upMotionGesture.timestamp;
+        long diffR = timeNow - rotationMotion.timestamp;
+        long diffU = timeNow - upMotion.timestamp;
         long maxTimeDiff = MAX_TIME_DIFF_RECEIVE;
 
-        if (rotationGesture.detected &&
-                upMotionGesture.detected &&
+        if (rotationMotion.detected &&
+                upMotion.detected &&
                 portraitMode &&
                 diffR < maxTimeDiff &&
                 diffU < maxTimeDiff) {
@@ -49,8 +50,8 @@ public class ReceiveMotionDetector extends MotionDetector {
         float yValue = values[1];
 
         if (yValue > MIN_VERTICAL_ACCELERATION_VALUE) {
-            upMotionGesture.detected = true;
-            upMotionGesture.timestamp = timestamp();
+            upMotion.detected = true;
+            upMotion.timestamp = timestamp();
             detect();
         }
     }
@@ -67,15 +68,15 @@ public class ReceiveMotionDetector extends MotionDetector {
         float gyroDiff = before - yValue;
 
         if (Math.abs(gyroDiff) > MIN_ROTATION_VALUE) {
-            rotationGesture.detected = true;
-            rotationGesture.timestamp = timestamp();
+            rotationMotion.detected = true;
+            rotationMotion.timestamp = timestamp();
             detect();
         }
         before = yValue;
     }
 
     private void reset() {
-        rotationGesture.detected = false;
-        upMotionGesture.detected = false;
+        rotationMotion.detected = false;
+        upMotion.detected = false;
     }
 }
