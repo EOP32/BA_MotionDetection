@@ -17,17 +17,15 @@ public class Constants {
 
     // ------> general constants for motion detection
     public static final float MIN_GRAVITY_VALUE = 6f;
-    public static final float MAX_GRAVITY = 9.81f;
-
     public static final float MIN_HORIZONTAL_ACCELERATION_VALUE = 8f;
     public static final float MIN_VERTICAL_ACCELERATION_VALUE = 6f;
-
     public static final float MIN_ROTATION_VALUE = 7f;
+    public static final long MAX_TIME_DIFF = 500;
+
+    // ------> specific SEND constants
     public static final float MIN_SEND_ROTATION_VALUE = 3.5f;
 
-    public static final long MAX_GENERAL_TIME_DIFF = 500;
-
-    // ------> RECEIVE constants
+    // ------> specific RECEIVE constants
     public static final long MAX_TIME_DIFF_RECEIVE = 150;
 
     // ------> tag for logging

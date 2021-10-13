@@ -1,9 +1,8 @@
 package com.ba.motiondetectionlib.detection.detectors;
 
-import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
+import static com.ba.motiondetectionlib.model.Constants.MAX_TIME_DIFF;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GRAVITY_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_HORIZONTAL_ACCELERATION_VALUE;
-import static com.ba.motiondetectionlib.model.Constants.MIN_ROTATION_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_SEND_ROTATION_VALUE;
 
 import android.content.Context;
@@ -39,7 +38,7 @@ public class SendMotionDetector extends MotionDetector {
         long forthPositionTimeDiff = timeNow - forthPosition.timestamp;
         long motionRightDiff = timeNow - motionRight.timestamp;
         long motionLeftDiff = timeNow - motionLeft.timestamp;
-        long maxTimeDiff = MAX_GENERAL_TIME_DIFF;
+        long maxTimeDiff = MAX_TIME_DIFF;
 
         if (backPosition.detected &&
                 forthPosition.detected &&

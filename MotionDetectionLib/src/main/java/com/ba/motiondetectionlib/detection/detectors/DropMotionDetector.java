@@ -1,6 +1,6 @@
 package com.ba.motiondetectionlib.detection.detectors;
 
-import static com.ba.motiondetectionlib.model.Constants.MAX_GENERAL_TIME_DIFF;
+import static com.ba.motiondetectionlib.model.Constants.MAX_TIME_DIFF;
 import static com.ba.motiondetectionlib.model.Constants.MIN_GRAVITY_VALUE;
 import static com.ba.motiondetectionlib.model.Constants.MIN_VERTICAL_ACCELERATION_VALUE;
 import android.content.Context;
@@ -38,8 +38,8 @@ public class DropMotionDetector extends MotionDetector {
                 cameraUpPosition.detected &&
                 dropMotion.detected &&
                 liftMotion.detected &&
-                cameraDownTimeDiff < MAX_GENERAL_TIME_DIFF &&
-                liftTimeDiff < MAX_GENERAL_TIME_DIFF &&
+                cameraDownTimeDiff < MAX_TIME_DIFF &&
+                liftTimeDiff < MAX_TIME_DIFF &&
                 cameraUpTimeDiff < cameraDownTimeDiff &&
                 dropTimeDiff < liftTimeDiff) {
 
