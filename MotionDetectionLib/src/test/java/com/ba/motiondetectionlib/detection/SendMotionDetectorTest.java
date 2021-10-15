@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SendMotionMotionDetectorTest {
+public class SendMotionDetectorTest {
     private SendMotionDetector detector;
     private Intent intent;
     private Context context;
@@ -65,13 +65,13 @@ public class SendMotionMotionDetectorTest {
 
     @Test
     public void validBorderlineValuesRightHandSuccess() throws InterruptedException {
-        detector.processAccelerationData(new float[]{15.1f, 0, 0});
+        detector.processAccelerationData(new float[]{8.1f, 0, 0});
         Thread.sleep(10);
-        detector.processGyroData(new float[]{0, -5.1f, 0});
+        detector.processGyroData(new float[]{0, -3.6f, 0});
         Thread.sleep(10);
-        detector.processGravityData(new float[]{-7.1f, 0, 0});
+        detector.processGravityData(new float[]{-6.1f, 0, 0});
         Thread.sleep(10);
-        detector.processGravityData(new float[]{7.1f, 0, 0});
+        detector.processGravityData(new float[]{6.1f, 0, 0});
 
         verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
         verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.SEND_MOTION);
@@ -123,6 +123,7 @@ public class SendMotionMotionDetectorTest {
     public void rightHandInvalidRotationShouldFail() throws InterruptedException {
         detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
         Thread.sleep(10);
+        // valid value should be rotate_right
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);
         detector.processGravityData(GRAVITY_BACK_VALID_ARR);
@@ -178,7 +179,7 @@ public class SendMotionMotionDetectorTest {
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
-        detector.processGravityData(new float[]{-6f, 0, 0});
+        detector.processGravityData(new float[]{-5.9f, 0, 0});
         Thread.sleep(10);
         detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
 
@@ -248,13 +249,13 @@ public class SendMotionMotionDetectorTest {
 
     @Test
     public void validBorderlineValuesLeftHandSuccess() throws InterruptedException {
-        detector.processAccelerationData(new float[]{-15.1f, 0, 0});
+        detector.processAccelerationData(new float[]{-8.1f, 0, 0});
         Thread.sleep(10);
-        detector.processGyroData(new float[]{0, 5.1f, 0});
+        detector.processGyroData(new float[]{0, 3.6f, 0});
         Thread.sleep(10);
-        detector.processGravityData(new float[]{7.1f, 0, 0});
+        detector.processGravityData(new float[]{6.1f, 0, 0});
         Thread.sleep(10);
-        detector.processGravityData(new float[]{-7.1f, 0, 0});
+        detector.processGravityData(new float[]{-6.1f, 0, 0});
 
         verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
         verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.SEND_MOTION);
@@ -280,6 +281,7 @@ public class SendMotionMotionDetectorTest {
     public void leftHandInvalidRotationShouldFail() throws InterruptedException {
         detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
         Thread.sleep(10);
+        // should be rotate_left
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
         Thread.sleep(10);
         detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
@@ -295,6 +297,7 @@ public class SendMotionMotionDetectorTest {
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
         Thread.sleep(10);
+        // this order below is valid for right hand not left hand
         detector.processGravityData(GRAVITY_BACK_VALID_ARR);
         Thread.sleep(10);
         detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
@@ -336,7 +339,7 @@ public class SendMotionMotionDetectorTest {
         Thread.sleep(10);
         detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
         Thread.sleep(10);
-        detector.processGravityData(new float[]{-6f, 0, 0});
+        detector.processGravityData(new float[]{-5.9f, 0, 0});
 
         verifyZeroInteractions(intent);
     }

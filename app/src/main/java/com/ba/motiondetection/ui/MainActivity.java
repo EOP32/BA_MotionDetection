@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity implements BroadcastListener
     private TextView dropText;
     private TextView scoopText;
 
-    private int sendDetected = 0;
-    private int receiveDetected = 0;
-    private int dropDetected = 0;
-    private int scoopDetected = 0;
+    private int sendDetected;
+    private int receiveDetected;
+    private int dropDetected;
+    private int scoopDetected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +57,11 @@ public class MainActivity extends AppCompatActivity implements BroadcastListener
         receiveText = findViewById(R.id.receiveNumber);
         dropText = findViewById(R.id.dropNumber);
         scoopText = findViewById(R.id.scoopNumber);
+
+        sendDetected = 0;
+        receiveDetected = 0;
+        dropDetected = 0;
+        scoopDetected = 0;
     }
 
     @Override
