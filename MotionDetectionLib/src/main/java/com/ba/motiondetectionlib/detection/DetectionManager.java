@@ -9,6 +9,7 @@ import com.ba.motiondetectionlib.detection.detectors.DropMotionDetector;
 import com.ba.motiondetectionlib.detection.detectors.ReceiveMotionDetector;
 import com.ba.motiondetectionlib.detection.detectors.ScoopMotionDetector;
 import com.ba.motiondetectionlib.detection.detectors.SendMotionDetector;
+import com.ba.motiondetectionlib.detection.detectors.SensorDataListener;
 
 import java.util.ArrayList;
 import java.util.List;

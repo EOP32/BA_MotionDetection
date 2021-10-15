@@ -12,9 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.ba.motiondetectionlib.detection.DetectionBroadcaster;
 import com.ba.motiondetectionlib.detection.MotionSensorSource;
-import com.ba.motiondetectionlib.detection.SensorDataListener;
 import com.ba.motiondetectionlib.model.MotionType;
 
 public abstract class MotionDetector implements DetectionBroadcaster, SensorDataListener {
