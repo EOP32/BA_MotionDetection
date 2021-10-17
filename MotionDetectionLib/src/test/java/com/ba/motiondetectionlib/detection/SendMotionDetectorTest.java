@@ -134,37 +134,10 @@ public class SendMotionDetectorTest {
     }
 
     @Test
-    public void rightHandWrongOrderGravityShouldFail() throws InterruptedException {
-        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
-        Thread.sleep(10);
-        detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
-        Thread.sleep(10);
-        detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
-        Thread.sleep(10);
-        detector.processGravityData(GRAVITY_BACK_VALID_ARR);
-        Thread.sleep(10);
-
-        verifyZeroInteractions(intent);
-    }
-
-    @Test
     public void rightHandInvalidAccelShouldFail() throws InterruptedException {
         detector.processAccelerationData(new float[]{6f, 0, 0});
         Thread.sleep(10);
         detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
-        Thread.sleep(10);
-        detector.processGravityData(GRAVITY_BACK_VALID_ARR);
-        Thread.sleep(10);
-        detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
-
-        verifyZeroInteractions(intent);
-    }
-
-    @Test
-    public void rightHandInvalidGyroShouldFail() throws InterruptedException {
-        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
-        Thread.sleep(10);
-        detector.processGyroData(new float[]{0, 0, 0});
         Thread.sleep(10);
         detector.processGravityData(GRAVITY_BACK_VALID_ARR);
         Thread.sleep(10);
@@ -182,6 +155,20 @@ public class SendMotionDetectorTest {
         detector.processGravityData(new float[]{-5.9f, 0, 0});
         Thread.sleep(10);
         detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
+
+        verifyZeroInteractions(intent);
+    }
+
+    @Test
+    public void rightHandWrongOrderGravityShouldFail() throws InterruptedException {
+        detector.processAccelerationData(MOTION_RIGHT_VALID_ARR);
+        Thread.sleep(10);
+        detector.processGyroData(ROTATE_RIGHT_VALID_ARR);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
+        Thread.sleep(10);
+        detector.processGravityData(GRAVITY_BACK_VALID_ARR);
+        Thread.sleep(10);
 
         verifyZeroInteractions(intent);
     }
@@ -310,19 +297,6 @@ public class SendMotionDetectorTest {
         detector.processAccelerationData(new float[]{-6f, 0, 0});
         Thread.sleep(10);
         detector.processGyroData(ROTATE_LEFT_VALID_ARR);
-        Thread.sleep(10);
-        detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
-        Thread.sleep(10);
-        detector.processGravityData(GRAVITY_BACK_VALID_ARR);
-
-        verifyZeroInteractions(intent);
-    }
-
-    @Test
-    public void leftHandInvalidGyroShouldFail() throws InterruptedException {
-        detector.processAccelerationData(MOTION_LEFT_VALID_ARR);
-        Thread.sleep(10);
-        detector.processGyroData(new float[]{0, 0, 0});
         Thread.sleep(10);
         detector.processGravityData(GRAVITY_FORTH_VALID_ARR);
         Thread.sleep(10);
