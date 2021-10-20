@@ -65,9 +65,9 @@ public class ReceiveMotionDetector extends MotionDetector {
     @Override
     public void processGyroData(float[] values) {
         float yValue = values[1];
-        float gyroDiff = before - yValue;
+        float gyroDiff = Math.abs(before - yValue);
 
-        if (Math.abs(gyroDiff) > MIN_ROTATION_VALUE) {
+        if (gyroDiff > MIN_ROTATION_VALUE) {
             rotationMotion.detected = true;
             rotationMotion.timestamp = timestamp();
             detect();

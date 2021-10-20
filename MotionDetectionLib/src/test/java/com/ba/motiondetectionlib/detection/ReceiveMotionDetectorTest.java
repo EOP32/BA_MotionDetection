@@ -23,7 +23,7 @@ public class ReceiveMotionDetectorTest {
     private Context context;
 
     private final float VALID_GRAVITY = 8f;
-    private final float VALID_ACCEL = 15f;
+    private final float VALID_ACCEL = 10f;
     private final float VALID_GYRO_POSITIVE = 8f;
     private final float VALID_GYRO_NEGATIVE = -8f;
 

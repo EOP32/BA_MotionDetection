@@ -83,7 +83,7 @@ public class DropMotionDetectorTest {
         Thread.sleep(50);
 
         detector.processAccelerationData(INVALID_ACCEL_VALUES);
-        detector.processAccelerationData(new float[]{0, 0, 6.1f});
+        detector.processAccelerationData(new float[]{0, 0, 5.1f});
         Thread.sleep(50);
 
         detector.processGravityData(INVALID_GRAVITY_VALUES_POS);
@@ -91,7 +91,7 @@ public class DropMotionDetectorTest {
         Thread.sleep(50);
 
         detector.processAccelerationData(INVALID_ACCEL_VALUES);
-        detector.processAccelerationData(new float[]{0, 0, 6.1f});
+        detector.processAccelerationData(new float[]{0, 0, 5.1f});
         Thread.sleep(50);
 
         verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
@@ -136,7 +136,7 @@ public class DropMotionDetectorTest {
         Thread.sleep(50);
         detector.processGravityData(VALID_GRAVITY_VALUES_NEGATIVE);
         Thread.sleep(50);
-        detector.processAccelerationData(new float[]{0, 0, 5.9f});
+        detector.processAccelerationData(new float[]{0, 0, 4.9f});
 
         verifyZeroInteractions(intent);
     }
@@ -145,7 +145,7 @@ public class DropMotionDetectorTest {
     public void borderlineButInvalidAccelerationSensorValuesFail2() throws InterruptedException {
         detector.processGravityData(VALID_GRAVITY_VALUES_POSITIVE);
         Thread.sleep(50);
-        detector.processAccelerationData(new float[]{0, 0, 5.9f});
+        detector.processAccelerationData(new float[]{0, 0, 4.9f});
         Thread.sleep(50);
         detector.processGravityData(VALID_GRAVITY_VALUES_NEGATIVE);
         Thread.sleep(50);
@@ -160,7 +160,7 @@ public class DropMotionDetectorTest {
         Thread.sleep(50);
         detector.processAccelerationData(VALID_ACCEL_VALUES);
         Thread.sleep(50);
-        detector.processGravityData(new float[]{0, 0, -5.9f});
+        detector.processGravityData(new float[]{0, 0, -4.9f});
         Thread.sleep(50);
         detector.processAccelerationData(VALID_ACCEL_VALUES);
 

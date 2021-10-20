@@ -77,11 +77,11 @@ public class ScoopMotionDetectorTest {
     public void validButBorderlineSensorValuesSuccess() throws InterruptedException {
         detector.processGravityData(new float[]{0, 0, -6.1f});
         Thread.sleep(50);
-        detector.processAccelerationData(new float[]{0, 0, 6.1f});
+        detector.processAccelerationData(new float[]{0, 0, 5.1f});
         Thread.sleep(50);
         detector.processGravityData(new float[]{0, 0, 6.1f});
         Thread.sleep(50);
-        detector.processAccelerationData(new float[]{0, 0, 6.1f});
+        detector.processAccelerationData(new float[]{0, 0, 5.1f});
 
         verify(intent, times(1)).setAction(Constants.INTENT_IDENTIFIER);
         verify(intent, times(1)).putExtra(Constants.STRING_EXTRA_IDENTIFIER, Constants.SCOOP_MOTION);
@@ -121,7 +121,7 @@ public class ScoopMotionDetectorTest {
     public void borderlineButInvalidAccelerationSensorValuesFail() throws InterruptedException {
         detector.processGravityData(VALID_GRAVITY_VALUES_NEGATIVE);
         Thread.sleep(50);
-        detector.processAccelerationData(new float[]{0, 0, 5.9f});
+        detector.processAccelerationData(new float[]{0, 0, 4.9f});
         Thread.sleep(50);
         detector.processGravityData(VALID_GRAVITY_VALUES_POSITIVE);
         Thread.sleep(50);

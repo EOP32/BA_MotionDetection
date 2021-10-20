@@ -18,7 +18,7 @@ public class Constants {
     // ------> general constants for motion detection
     public static final float MIN_GRAVITY_VALUE = 6f;
     public static final float MIN_HORIZONTAL_ACCELERATION_VALUE = 8f;
-    public static final float MIN_VERTICAL_ACCELERATION_VALUE = 6f;
+    public static final float MIN_VERTICAL_ACCELERATION_VALUE = 5f;
     public static final float MIN_ROTATION_VALUE = 7f;
     public static final long MAX_TIME_DIFF = 500;
 
