@@ -4,6 +4,8 @@
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
+/.idea/sonarlint
+/.idea/sonarlint-state.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
@@ -11,5 +13,6 @@
 /build
 /captures
 .externalNativeBuild
+/.idea/sonarlint.xml
 .cxx
 local.properties
